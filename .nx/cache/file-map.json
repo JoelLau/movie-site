@@ -68,36 +68,6 @@
   ],
   "fileMap": {
     "projectFileMap": {
-      "e2e": [
-        {
-          "file": "e2e/.eslintrc.json",
-          "hash": "14929211716204551578"
-        },
-        {
-          "file": "e2e/playwright.config.ts",
-          "hash": "1283254021702533857",
-          "deps": [
-            "npm:@playwright/test",
-            "npm:@nx/playwright",
-            "npm:@nx/devkit"
-          ]
-        },
-        {
-          "file": "e2e/project.json",
-          "hash": "2577576372068538598"
-        },
-        {
-          "file": "e2e/src/example.spec.ts",
-          "hash": "16019101014373124625",
-          "deps": [
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "e2e/tsconfig.json",
-          "hash": "7733746780202869868"
-        }
-      ],
       "movie-site": [
         {
           "file": ".eslintignore",
@@ -106,6 +76,10 @@
         {
           "file": ".eslintrc.json",
           "hash": "12043951082061843309"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "hash": "14311344209215785595"
         },
         {
           "file": ".gitignore",
@@ -122,10 +96,6 @@
         {
           "file": ".vscode/extensions.json",
           "hash": "17425123947026961272"
-        },
-        {
-          "file": ".yarnrc",
-          "hash": "6414922622098367488"
         },
         {
           "file": "README.md",
@@ -296,10 +266,36 @@
         {
           "file": "tsconfig.spec.json",
           "hash": "16287279946930924495"
+        }
+      ],
+      "e2e": [
+        {
+          "file": "e2e/.eslintrc.json",
+          "hash": "14929211716204551578"
         },
         {
-          "file": "yarn.lock",
-          "hash": "9990959596286564172"
+          "file": "e2e/playwright.config.ts",
+          "hash": "1283254021702533857",
+          "deps": [
+            "npm:@playwright/test",
+            "npm:@nx/playwright",
+            "npm:@nx/devkit"
+          ]
+        },
+        {
+          "file": "e2e/project.json",
+          "hash": "2577576372068538598"
+        },
+        {
+          "file": "e2e/src/example.spec.ts",
+          "hash": "16019101014373124625",
+          "deps": [
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "e2e/tsconfig.json",
+          "hash": "7733746780202869868"
         }
       ]
     },
