@@ -1,28 +1,39 @@
 {
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": [
+    "!**/*"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "extends": [
+        "plugin:@nx/javascript"
+      ],
       "rules": {}
     },
     {
-      "files": ["*.ts", "*.tsx"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
       "rules": {}
     },
     {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nx/javascript"],
-      "rules": {}
-    },
-    {
-      "files": ["src/**/*.{ts,js,tsx,jsx}"],
+      "files": [
+        "src/**/*.{ts,js,tsx,jsx}"
+      ],
+      "extends": [
+        "plugin:prettier/recommended"
+      ],
       "rules": {}
     }
   ],
-  "extends": ["plugin:playwright/recommended"],
-  "plugins": ["@nx"]
+  "extends": [
+    "plugin:playwright/recommended"
+  ],
+  "plugins": [
+    "@nx"
+  ]
 }
