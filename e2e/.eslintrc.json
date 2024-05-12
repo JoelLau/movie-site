@@ -1,0 +1,39 @@
+{
+  "ignorePatterns": [
+    "!**/*"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "extends": [
+        "plugin:@nx/javascript"
+      ],
+      "rules": {}
+    },
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {}
+    },
+    {
+      "files": [
+        "src/**/*.{ts,js,tsx,jsx}"
+      ],
+      "extends": [
+        "plugin:prettier/recommended"
+      ],
+      "rules": {}
+    }
+  ],
+  "extends": [
+    "plugin:playwright/recommended"
+  ],
+  "plugins": [
+    "@nx"
+  ]
+}
