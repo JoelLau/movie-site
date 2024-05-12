@@ -121,4 +121,5 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/git,vim,macos,angular,yarn
 
-./nx/cache/*
+.nx/
+./nx/
