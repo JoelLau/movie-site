@@ -9,11 +9,19 @@
     "importHelpers": true,
     "target": "es2022",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
+    "paths": {
+      "@env/*": ["src/environments/*"],
+      "@pages/*": ["src/app/pages/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@test-helpers/*": ["src/app/test-helpers/*"],
+    },
     "useDefineForClassFields": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -37,7 +45,10 @@
     }
   ],
   "compileOnSave": false,
-  "exclude": ["node_modules", "tmp"],
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

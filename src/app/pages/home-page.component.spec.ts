@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomePageComponent } from './home-page.component';
+import { generateMockMovies } from '@test-helpers/movie-generator';
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;
@@ -20,7 +21,7 @@ describe(HomePageComponent.name, () => {
   });
 
   it('should render popular movies', async () => {
-    component.popularMovies = Array(10);
+    component.popularMovies = generateMockMovies(10);
 
     fixture.detectChanges();
     await fixture.whenStable();
