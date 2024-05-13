@@ -12,7 +12,15 @@ export type Movies = Movie[];
 
 export interface Movie {
   id: string;
-  slug: string;
+  title: string;
   popularity: number;
-  // ...
+  image: {
+    url: string;
+    title: string;
+  };
+  slug: string;
+  runtime: string;
+  released: string;
+  genres: Set<string>;
+  budget: number;
 }

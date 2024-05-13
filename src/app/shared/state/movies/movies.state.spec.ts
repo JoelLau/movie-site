@@ -40,9 +40,37 @@ describe(MoviesState.name, () => {
   describe(`\`${Refresh.name}\` action`, () => {
     it('replaces `movieList`', () => {
       const mockRaws: FetchAllResponse = [
-        { id: '', slug: '', title: '', popularity: '9.3' },
+        {
+          id: 'tt0111161',
+          title: 'The Shawshank Redemption',
+          popularity: '9.3',
+          image: {
+            url: 'https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg',
+            title: 'The Shawshank Redemption',
+          },
+          slug: 'the-shawshank-redemption',
+          runtime: '142 min',
+          released: '14 Oct 1994',
+          genres: ['Drama'],
+          budget: 28767189,
+        },
       ];
-      const movieList: Movies = [{ id: '', slug: '', popularity: 9.3 }];
+      const movieList: Movies = [
+        {
+          id: 'tt0111161',
+          title: 'The Shawshank Redemption',
+          popularity: 9.3,
+          image: {
+            url: 'https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg',
+            title: 'The Shawshank Redemption',
+          },
+          slug: 'the-shawshank-redemption',
+          runtime: '142 min',
+          released: '14 Oct 1994',
+          genres: new Set(['Drama']),
+          budget: 28767189,
+        },
+      ];
 
       const service = TestBed.inject(MoviesApiService);
       jest.spyOn(service, 'fetchAll').mockReturnValue(of(mockRaws));

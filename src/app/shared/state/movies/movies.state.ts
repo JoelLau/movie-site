@@ -24,9 +24,9 @@ export class MoviesState {
       map((raws) => {
         return raws.map((raw) => {
           return {
-            id: raw.id,
-            slug: raw.slug,
+            ...raw,
             popularity: parseFloat(raw.popularity),
+            genres: new Set(raw.genres),
           };
         });
       }),

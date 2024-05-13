@@ -9,8 +9,17 @@ export function generateMockMovies(num: number): Movies {
 export function generateMockMovie(): Movie {
   return {
     id: generateString(),
-    slug: generateString(),
+    title: generateString(),
     popularity: generateFloat(0, 10),
+    image: {
+      url: generateString(),
+      title: generateString(),
+    },
+    slug: generateString(),
+    runtime: generateString(),
+    released: generateString(),
+    genres: new Set(),
+    budget: generateFloat(0, 10),
   };
 }
 
