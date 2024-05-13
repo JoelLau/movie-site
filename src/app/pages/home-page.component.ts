@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, Subject, map, of, takeUntil } from 'rxjs';
+import { Component } from '@angular/core';
+import { Subject, map, take, takeUntil } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { Movie, Movies } from '@shared/state/movies/movies.models';
+import { MoviesState } from '@shared/state/movies/movies.state';
+import { Refresh } from '@shared/state/movies/movies.actions';
 
 @Component({
   selector: 'app-home-page',
@@ -14,15 +18,31 @@ export class HomePageComponent {
 
   destroyed$ = new Subject();
 
-  constructor() {
+  constructor(private readonly store: Store) {
+    this.refreshMoviesList();
     this.populatePopularMovies();
+  }
+
+  refreshMoviesList() {
+    this.store
+      .dispatch(Refresh)
+      .pipe(take(1))
+      .subscribe(() => {
+        console.log('refresh complete');
+      });
   }
 
   populatePopularMovies() {
     this.fetchMovies()
       .pipe(
-        map((movies) => movies.sort((a, b) => b - a)),
-        map((movies) => movies.slice(0, 10)),
+        map((movies: Movies) => {
+          return movies
+            .slice() // ngxs freezes array to prevent mutation
+            .sort((a, b) => b.popularity - a.popularity);
+        }),
+        map((movies) => {
+          return movies.slice(0, 10);
+        }),
         takeUntil(this.destroyed$),
       )
       .subscribe((movies) => {
@@ -30,15 +50,15 @@ export class HomePageComponent {
       });
   }
 
-  fetchMovies(): Observable<Movies> {
-    // TODO: populate
-    return of([]);
+  fetchMovies() {
+    return this.store.select(MoviesState.all).pipe(
+      map((movies) => {
+        return movies ?? [];
+      }),
+    );
   }
 
   trackMovieBy(_index: number, movie: Movie) {
     return movie?.id;
   }
 }
-
-export type Movies = Movie[];
-export type Movie = any;

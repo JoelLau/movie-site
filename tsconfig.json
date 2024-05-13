@@ -19,6 +19,7 @@
     "paths": {
       "@env/*": ["src/environments/*"],
       "@pages/*": ["src/app/pages/*"],
+      "@services/*": ["src/app/services/*"],
       "@shared/*": ["src/app/shared/*"],
       "@test-helpers/*": ["src/app/test-helpers/*"],
     },

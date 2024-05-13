@@ -1,4 +1,4 @@
-import { Movie, Movies } from '@shared/state/movies/movies-state.models';
+import { Movie, Movies } from '@shared/state/movies/movies.models';
 
 export function generateMockMovies(num: number): Movies {
   return Array(num).map(() => {

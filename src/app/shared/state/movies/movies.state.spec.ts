@@ -1,9 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
+import { MockProviders } from 'ng-mocks';
+import { of } from 'rxjs';
 import { MoviesState } from './movies.state';
-import { INITIAL_STATE, Movie } from './movies-state.models';
-import { ReplaceAll } from './movies.actions';
+import { INITIAL_STATE, Movies } from './movies.models';
+import { Refresh } from './movies.actions';
 import { generateMockMovies } from '@test-helpers/movie-generator';
+import { MoviesApiService } from '@services/movies-api.service';
+import { FetchAllResponse } from '@services/movies-api.model';
 
 describe(MoviesState.name, () => {
   let store: Store;
@@ -11,6 +15,7 @@ describe(MoviesState.name, () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NgxsModule.forRoot([MoviesState], { developmentMode: true })],
+      providers: [[...MockProviders(MoviesApiService)]],
     }).compileComponents();
 
     store = TestBed.inject(Store);
@@ -32,12 +37,17 @@ describe(MoviesState.name, () => {
     });
   });
 
-  describe(`\`${ReplaceAll.name}\` action`, () => {
+  describe(`\`${Refresh.name}\` action`, () => {
     it('replaces `movieList`', () => {
-      expect(store.selectSnapshot(MoviesState)).toStrictEqual(INITIAL_STATE);
+      const mockRaws: FetchAllResponse = [
+        { id: '', slug: '', title: '', popularity: '9.3' },
+      ];
+      const movieList: Movies = [{ id: '', slug: '', popularity: 9.3 }];
 
-      const movieList = generateMockMovies(30);
-      store.dispatch(new ReplaceAll(movieList));
+      const service = TestBed.inject(MoviesApiService);
+      jest.spyOn(service, 'fetchAll').mockReturnValue(of(mockRaws));
+
+      store.dispatch(new Refresh());
       expect(store.selectSnapshot((state) => state.movies?.movieList)).toEqual(
         movieList,
       );

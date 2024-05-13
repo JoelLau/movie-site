@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgxsModule } from '@ngxs/store';
+import { MockProvider } from 'ng-mocks';
 import { HomePageComponent } from './home-page.component';
 import { generateMockMovies } from '@test-helpers/movie-generator';
+import { MoviesState } from '@shared/state/movies/movies.state';
+import { MoviesApiService } from '@services/movies-api.service';
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;
@@ -8,7 +12,11 @@ describe(HomePageComponent.name, () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomePageComponent],
+      imports: [
+        HomePageComponent,
+        NgxsModule.forRoot([MoviesState], { developmentMode: true }),
+      ],
+      providers: [MockProvider(MoviesApiService)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePageComponent);
