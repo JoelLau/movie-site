@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Subject, map, take, takeUntil } from 'rxjs';
 import { Store } from '@ngxs/store';
+import { RouterModule } from '@angular/router';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
 import { MoviesState } from '@shared/state/movies/movies.state';
 import { Refresh } from '@shared/state/movies/movies.actions';
@@ -9,7 +10,7 @@ import { Refresh } from '@shared/state/movies/movies.actions';
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
 })
