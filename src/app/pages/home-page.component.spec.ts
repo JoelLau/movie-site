@@ -18,4 +18,14 @@ describe(HomePageComponent.name, () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should render popular movies', async () => {
+    component.popularMovies = Array(10);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const page: HTMLElement = fixture.debugElement.nativeElement;
+    expect(page.querySelectorAll('.movie-list__item')).toHaveLength(10);
+  });
 });
