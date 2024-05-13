@@ -26,7 +26,7 @@ export default defineConfig({
   webServer: {
     command: 'yarn nx serve movie-site',
     url: 'http://localhost:4200',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env['CI'],
     cwd: workspaceRoot,
   },
   projects: [

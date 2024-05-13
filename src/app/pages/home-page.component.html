@@ -1,1 +1,12 @@
 <p>home-page works!</p>
+
+<ul class="movie-list">
+	<h2>Popular</h2>
+	<ng-container *ngFor="let movie of popularMovies; trackBy: trackMovieBy">
+		<li class="movie-list__item">
+			<a *ngIf="movie" [href]="'movies/' + movie.slug">
+				<img [src]="movie.image.url" [alt]="movie.image.title">
+			</a>
+		</li>
+	</ng-container>
+</ul>
