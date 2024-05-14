@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Params, Router, RouterModule } from '@angular/router';
+import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import { NgxsModule, Store } from '@ngxs/store';
 import {
   Subject,
@@ -29,7 +30,7 @@ import { Nullable } from '@shared/type-helpers';
     RouterModule,
 
     // Third-party
-    NgxsModule,
+    NgxsFormPluginModule,
   ],
   templateUrl: './movies-page.component.html',
   styleUrl: './movies-page.component.scss',
