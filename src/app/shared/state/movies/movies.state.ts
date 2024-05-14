@@ -1,40 +1,58 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { map, tap } from 'rxjs';
-import { INITIAL_STATE, MovieStateModel } from './movies.models';
-import { Refresh } from './movies.actions';
-import { MoviesApiService } from '@services/movies-api.service';
+import { Replace } from './movies.actions';
+import { INITIAL_STATE, Movie, MovieStateModel, Movies } from './movies.models';
+import { Optional } from '@shared/type-helpers';
+
+export const NAME = 'movies';
 
 @State<MovieStateModel>({
-  name: 'movies',
+  name: NAME,
   defaults: INITIAL_STATE,
 })
 @Injectable()
 export class MoviesState {
-  constructor(private readonly moviesApi: MoviesApiService) {}
+  @Selector()
+  static movies(state: MovieStateModel) {
+    return state;
+  }
 
   @Selector()
-  static all(state: MovieStateModel) {
-    return state?.movieList;
+  static reduceMovieFn<T>(movies: MovieStateModel) {
+    return (
+      reduceFn: (prev: T, curr: Movie, index: number, array: Movies) => T,
+      init: T,
+    ) => {
+      return movies?.reduce<T>(reduceFn, init);
+    };
   }
 
-  @Action(Refresh)
-  Refresh({ patchState }: StateContext<MovieStateModel>) {
-    return this.moviesApi.fetchAll().pipe(
-      map((raws) => {
-        return raws.map((raw) => {
-          return {
-            ...raw,
-            popularity: parseFloat(raw.popularity),
-            genres: new Set(raw.genres),
-          };
-        });
-      }),
-      tap((movies) => {
-        patchState({
-          movieList: movies,
-        });
-      }),
-    );
+  @Action(Replace)
+  Replace(state: StateContext<MovieStateModel>, action: Replace) {
+    return state.setState(action.newMovieList);
   }
+}
+
+function filterBySearchTerm(
+  movies: Optional<Movies>,
+  searchTerm: string,
+): Optional<Movies> {
+  if (!searchTerm) return movies?.slice();
+
+  return movies?.filter(({ id, title }) => {
+    const haystack = [id, title].join('|').toLowerCase();
+    const needle = searchTerm.trim().toLowerCase();
+
+    return haystack.includes(needle);
+  });
+}
+
+function filterByGenres(
+  movies: Optional<Movies>,
+  genres: string[],
+): Optional<Movies> {
+  if (genres.length == 0) {
+    return movies;
+  }
+  return movies?.filter(() => true);
 }

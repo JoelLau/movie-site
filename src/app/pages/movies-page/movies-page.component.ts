@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Params, Router, RouterModule } from '@angular/router';
-import { NgxsFormPluginModule } from '@ngxs/form-plugin';
-import { Store } from '@ngxs/store';
 import {
-  Subject,
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  startWith,
-  take,
-  takeUntil,
-} from 'rxjs';
-import { Refresh } from '@shared/state/movies/movies.actions';
-import { Movie, Movies } from '@shared/state/movies/movies.models';
-import { MoviesState } from '@shared/state/movies/movies.state';
-import { Nullable } from '@shared/type-helpers';
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+} from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { NgxsFormPluginModule } from '@ngxs/form-plugin';
+import { Subject } from 'rxjs';
+import { MoviesPageFilters, NAME } from './movies-page-filters.state';
+import { MoviesPageService } from './movies-page.service';
+import { TypedFormGroup } from '@shared/type-helpers';
+import {
+  Genre,
+  Genres,
+  Movie,
+  Movies,
+} from '@shared/state/movies/movies.models';
 
 @Component({
   selector: 'app-movies-page',
@@ -34,142 +34,127 @@ import { Nullable } from '@shared/type-helpers';
   templateUrl: './movies-page.component.html',
   styleUrl: './movies-page.component.scss',
 })
-export class MoviesPageComponent {
+export class MoviesPageComponent implements OnDestroy {
+  readonly DEBOUNCE_TIME = 500;
+  readonly FORMSTATE_KEY = NAME;
+
   movies?: Movies;
   genres?: Genres;
 
   destroyed$ = new Subject();
 
-  form = this.getNewFormGroup();
+  // Avoid direct access!
+  // use `MoviesPageService.fetchFilters()` instead
+  form: TypedFormGroup<MoviesPageFilters> = createFiltersForm();
 
   constructor(
-    private readonly store: Store,
+    private readonly moviesService: MoviesPageService,
+    private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
   ) {
-    this.refreshMoviesList();
-    this.bindStoreToMovies();
-    this.bindStoreToGenres();
-    this.bindFormToQueryParam();
+    // ====
+    // TL;DR: form -> queryParams -> filtered items
+    //
+    // 1. forms initialise (once) with query param values
+    // 2. changes to form values actively update `queryParams`
+    // 3. changes to `queryParams` actively update changes to:
+    //    - filtered list of movies
+    //    - filtered list of genres
+    //
+    this.bindFormToQueryParams();
   }
 
-  private getNewFormGroup(): FormGroup<{
-    search: FormControl<Nullable<string>>;
-    genres: FormControl<Nullable<string[]>>;
-  }> {
-    return new FormGroup({
-      search: new FormControl(''),
-      genres: new FormControl([] as string[]),
+  bindFormToQueryParams() {
+    this.form.valueChanges.pipe().subscribe(({ searchTerms, genres }) => {
+      const queryParams: Params = {};
+
+      if (searchTerms) {
+        queryParams['searchTerms'] = searchTerms;
+      }
+
+      if ((genres ?? []).length > 0) {
+        queryParams['genres'] = genres?.join(',');
+      }
+
+      this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParams,
+      });
     });
   }
 
-  refreshMoviesList() {
-    this.store
-      .dispatch(Refresh)
-      .pipe(take(1))
-      .subscribe(() => {
-        console.log('refresh complete');
-      });
+  createNewFiltersForm() {
+    const form = createFiltersForm();
+
+    // set form fields (once)
+    const queryParams = this.activatedRoute.snapshot.queryParams;
+
+    if (queryParams['searchTerms']) {
+      form.patchValue({ searchTerms: queryParams['searchTerms'] });
+    }
+
+    if (queryParams['genres']) {
+      form.patchValue({ genres: queryParams['genres'].split(',') });
+    }
+
+    return form;
   }
 
-  bindStoreToMovies() {
-    this.fetchMovies()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((movies) => {
-        this.movies = movies;
-      });
-  }
+  // store filter changes to url
+  // bindQueryParams() {
+  //   const filter$ = this.form.valueChanges.pipe(
+  //     debounceTime(500),
+  //     distinctUntilChanged(),
+  //   );
 
-  bindFormToQueryParam() {
-    this.fetchFilterChange()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ search, genres }) => {
-        const queryParams: Params = {};
-        if (search) {
-          queryParams['search term'] = search;
-        }
-        if (genres.length) {
-          queryParams['genres'] = genres.join(',');
-        }
+  //   return filter$
+  //     .pipe(
+  //       map(({ genres, ...rest }) => {
+  //         const queryParams: Params = { ...rest };
 
-        this.router.navigate([], { queryParams });
-      });
-  }
+  //         // genre requires remapping
+  //         const genreArr = genres ?? [];
+  //         if (genreArr.length > 0) {
+  //           queryParams['genres'] = genreArr.join(',');
+  //         }
 
-  bindStoreToGenres() {
-    this.fetchMovies()
-      .pipe(
-        map((movies) => {
-          if (!movies) {
-            return undefined;
-          }
+  //         return queryParams;
+  //       }),
+  //     )
+  //     .subscribe((queryParams) => {
+  //       this.router.navigate([], {
+  //         relativeTo: this.activatedRoute,
+  //         queryParams,
+  //       });
+  //     });
+  // }
 
-          const set = movies.reduce((prev, curr) => {
-            return new Set([...prev, ...curr.genres]);
-          }, new Set<string>());
+  // bindFilterState() {
+  //   return this.activatedRoute.queryParams.subscribe(() => {
+  //     console.log('filter updated');
+  //   });
+  // }
 
-          return Array.from(set).sort();
-        }),
-        takeUntil(this.destroyed$),
-      )
-      .subscribe((genres) => {
-        this.genres = genres;
-      });
-  }
-
-  fetchFilterChange() {
-    return this.form.valueChanges.pipe(
-      startWith({ search: undefined, genres: undefined }),
-      map((x) => JSON.parse(JSON.stringify(x))),
-      debounceTime(500),
-      distinctUntilChanged(),
-    );
-  }
-
-  fetchMovies() {
-    const movieStore$ = this.store.select(MoviesState.all);
-    const filters$ = this.fetchFilterChange();
-
-    return combineLatest({
-      movies: movieStore$,
-      filters: filters$,
-    }).pipe(
-      map(({ movies, filters }) => {
-        if (!movies || !filters) {
-          return movies;
-        }
-
-        let filteredList = movies;
-
-        if (filters?.search) {
-          filteredList = filteredList.filter((movie) => {
-            return [movie.title, movie.id]
-              .join('|')
-              .toLowerCase()
-              .includes((filters.search ?? '').toLowerCase());
-          });
-        }
-
-        if ((filters?.genres ?? []).length) {
-          filteredList = filteredList.filter((movie) => {
-            return (filters?.genres ?? []).find((genre: string) => {
-              return movie.genres.has(genre);
-            });
-          });
-        }
-
-        return filteredList;
-      }),
-    );
-  }
-
-  trackMovieBy(_index: number, movie: Movie) {
+  trackMovieBy(_index: number, movie?: Movie) {
     return movie?.id;
   }
 
   trackGenreBy(_index: number, genre: Genre) {
     return genre;
   }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
 }
 
-export type Genres = Genre[];
-export type Genre = string;
+function createFiltersForm() {
+  const nonNullable = true;
+
+  return new FormGroup({
+    searchTerms: new FormControl<string>('', { nonNullable }),
+    genres: new FormControl<string[]>([], { nonNullable }),
+  });
+}

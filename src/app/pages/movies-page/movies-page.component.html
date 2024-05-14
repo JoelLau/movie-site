@@ -14,7 +14,7 @@
 </aside>
 <main>
   <h2>Movies</h2>
-  <form [formGroup]="this.form" ngxsForm="movies.filters">
+  <form [formGroup]="this.form">
     <div>
       <label for="movie-search-bar">
         Search
@@ -23,10 +23,10 @@
         type="text"
         name="movie-search-bar"
         id="movie-search-bar"
-        placeholder="Search Movies"
-        formControlName="search"
+        placeholder="Search Terms"
+        formControlName="searchTerms"
       />
-      <button type="button" (click)="this.form.controls.search.reset">clear</button>
+      <button type="button" (click)="this.form.controls.searchTerms.reset">clear</button>
     </div>
     <div>
       <label for="genre-filter">

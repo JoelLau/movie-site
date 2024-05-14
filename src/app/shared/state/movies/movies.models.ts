@@ -1,24 +1,13 @@
-import { Optional } from '@shared/type-helpers';
+import { Nullable, Optional } from '@shared/type-helpers';
 
-export const INITIAL_STATE: MovieStateModel = {
-  movieList: undefined,
-  filterParams: {
-    search: '',
-    genres: [],
-  },
-} as const;
-
-export interface MovieStateModel {
-  movieList: Optional<Movies>;
-  filterParams: MovieFilterParams;
-}
-
+export const INITIAL_STATE: MovieStateModel = undefined;
+export type MovieStateModel = Optional<Movies>;
 export type Movies = Movie[];
 
 export interface Movie {
   id: string;
   title: string;
-  popularity: number;
+  popularity: string;
   image: {
     url: string;
     title: string;
@@ -26,11 +15,9 @@ export interface Movie {
   slug: string;
   runtime: string;
   released: string;
-  genres: Set<string>;
-  budget: number;
+  genres: Genres;
+  budget: Nullable<number>;
 }
 
-export interface MovieFilterParams {
-  search: string;
-  genres: string[];
-}
+export type Genres = Genre[];
+export type Genre = string;

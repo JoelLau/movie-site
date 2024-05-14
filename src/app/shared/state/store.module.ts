@@ -5,9 +5,10 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { MoviesState } from './movies/movies.state';
+import { MoviesPageFiltersState } from '@pages/movies-page/movies-page-filters.state';
 import { environment } from '@env/environment';
 
-export const NGXS_STATES = [MoviesState];
+export const NGXS_STATES = [MoviesState, MoviesPageFiltersState];
 
 @NgModule({
   imports: [
@@ -15,7 +16,9 @@ export const NGXS_STATES = [MoviesState];
     NgxsModule.forRoot(NGXS_STATES, {
       developmentMode: !environment.production,
     }),
-    NgxsStoragePluginModule.forRoot(),
+    NgxsStoragePluginModule.forRoot({
+      key: [],
+    }),
     NgxsRouterPluginModule.forRoot(),
     NgxsFormPluginModule.forRoot(),
   ],

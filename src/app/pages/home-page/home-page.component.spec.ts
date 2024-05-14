@@ -1,11 +1,17 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgxsModule } from '@ngxs/store';
-import { MockProvider } from 'ng-mocks';
 import { RouterModule } from '@angular/router';
+import { of } from 'rxjs';
 import { HomePageComponent } from './home-page.component';
-import { generateMockMovies } from '@test-helpers/movie-generator';
-import { MoviesState } from '@shared/state/movies/movies.state';
-import { MoviesApiService } from '@services/movies-api.service';
+import { MoviesService } from '@services/movies/movies.service';
+import { generateMockMovies } from '@tests/movie-generator';
+
+const MovieServiceProvider = {
+  provide: MoviesService,
+  useValue: {
+    fetchMovieList: () => of([]),
+  },
+};
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;
@@ -19,12 +25,13 @@ describe(HomePageComponent.name, () => {
 
         // Angular dependencies
         RouterModule.forRoot([]),
-
-        // Third-party dependencies
-        NgxsModule.forRoot([MoviesState], { developmentMode: true }),
       ],
-      providers: [MockProvider(MoviesApiService)],
-    }).compileComponents();
+      providers: [MovieServiceProvider],
+    })
+      .overrideComponent(HomePageComponent, {
+        set: { changeDetection: ChangeDetectionStrategy.Default },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(HomePageComponent);
     component = fixture.componentInstance;

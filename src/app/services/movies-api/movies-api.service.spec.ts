@@ -6,7 +6,7 @@ import {
 import { MoviesApiService } from './movies-api.service';
 import { FetchAllResponse } from './movies-api.model';
 
-describe('MoviesApiService', () => {
+describe(MoviesApiService.name, () => {
   let service: MoviesApiService;
   let httpController: HttpTestingController;
 
