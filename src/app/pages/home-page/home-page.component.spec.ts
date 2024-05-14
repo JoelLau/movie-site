@@ -35,6 +35,13 @@ describe(HomePageComponent.name, () => {
     expect(component).toBeTruthy();
   });
 
+  describe('page contents', () => {
+    it.each([' main', '.movie-list', '.side-menu'])('%s', (selector) => {
+      const page: HTMLElement = fixture.debugElement.nativeElement;
+      expect(page.querySelector(selector)).toBeTruthy();
+    });
+  });
+
   it('should render popular movies', async () => {
     component.popularMovies = generateMockMovies(10);
 
@@ -43,12 +50,5 @@ describe(HomePageComponent.name, () => {
 
     const page: HTMLElement = fixture.debugElement.nativeElement;
     expect(page.querySelectorAll('.movie-list__item')).toHaveLength(10);
-  });
-
-  describe('page contents', () => {
-    it.each(['.movie-list', '.side-menu'])('%s', (selector) => {
-      const page: HTMLElement = fixture.debugElement.nativeElement;
-      expect(page.querySelector(selector)).toBeTruthy();
-    });
   });
 });

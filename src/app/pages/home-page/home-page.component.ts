@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
 import { MoviesState } from '@shared/state/movies/movies.state';
 import { Refresh } from '@shared/state/movies/movies.actions';
+import { Optional } from '@shared/type-helpers';
 
 @Component({
   selector: 'app-home-page',
@@ -36,14 +37,11 @@ export class HomePageComponent {
   populatePopularMovies() {
     this.fetchMovies()
       .pipe(
-        map((movies: Movies) => {
-          return movies
-            .slice() // ngxs freezes array to prevent mutation
-            .sort((a, b) => b.popularity - a.popularity);
-        }),
-        map((movies) => {
-          return movies.slice(0, 10);
-        }),
+        map((x) => x.slice()),
+        map((movies: Optional<Movies>) =>
+          movies?.sort((a, b) => b.popularity - a.popularity),
+        ),
+        map((movies) => movies?.slice(0, 10)),
         takeUntil(this.destroyed$),
       )
       .subscribe((movies) => {
