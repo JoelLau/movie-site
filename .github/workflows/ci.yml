@@ -61,4 +61,4 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       - run: npx playwright install --with-deps
-      - run: yarn nx affected -t e2e-ci
+      - run: yarn nx affected -t e2e-ci --parallel=1
