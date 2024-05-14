@@ -28,7 +28,7 @@ test('search for movies', async ({ page }) => {
   await page.goto(MOVIESPAGE_URL, { waitUntil: 'domcontentloaded' });
 
   await page
-    .getByRole('textbox', { name: /search movies/i })
+    .getByRole('textbox', { name: /search/i })
     .fill('The Lord of the Rings');
 
   // wait for debounce after typing
