@@ -3,13 +3,32 @@
 <aside class="side-menu">
   <nav>
     <ul>
-      <li><a routerLink="/" routerLinkActive="active">Home</a></li>
-      <li><a routerLink="/movies">Movies</a></li>
+      <li>
+        <a routerLink="/" routerLinkActive="active">Home</a>
+      </li>
+      <li>
+        <a routerLink="/movies">Movies</a>
+      </li>
     </ul>
   </nav>
 </aside>
 <main>
   <h2>Movies</h2>
+  <form [formGroup]="this.form">
+    <div>
+      <label for="movie-search-bar">
+        Search Movies
+      </label>
+      <input
+        type="text"
+        name="movie-search-bar"
+        id="movie-search-bar"
+        placeholder="Search Movies"
+        formControlName="search"
+      />
+      <button type="reset">clear</button>
+    </div>
+  </form>
   <ul class="movie-list">
     <ng-container *ngFor="let movie of movies; trackBy: trackMovieBy">
       <li class="movie-list__item">
@@ -20,5 +39,3 @@
     </ng-container>
   </ul>
 </main>
-
-<pre>{{movies |json}}</pre>
