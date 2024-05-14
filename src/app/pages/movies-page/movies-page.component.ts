@@ -1,16 +1,35 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Subject, map, take, takeUntil } from 'rxjs';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Params, Router, RouterModule } from '@angular/router';
 import { NgxsModule, Store } from '@ngxs/store';
-import { RouterModule } from '@angular/router';
+import {
+  Subject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+  take,
+  takeUntil,
+} from 'rxjs';
+import { Refresh } from '@shared/state/movies/movies.actions';
 import { Movie } from '@shared/state/movies/movies.models';
 import { MoviesState } from '@shared/state/movies/movies.state';
-import { Refresh } from '@shared/state/movies/movies.actions';
+import { Nullable } from '@shared/type-helpers';
 
 @Component({
   selector: 'app-movies-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+
+    // Third-party
+    NgxsModule,
+  ],
   templateUrl: './movies-page.component.html',
   styleUrl: './movies-page.component.scss',
 })
@@ -19,9 +38,23 @@ export class MoviesPageComponent {
 
   destroyed$ = new Subject();
 
-  constructor(private readonly store: Store) {
+  form = this.getNewFormGroup();
+
+  constructor(
+    private readonly store: Store,
+    private readonly router: Router,
+  ) {
     this.refreshMoviesList();
-    this.populateMovies();
+    this.bindStoreToMovies();
+    this.bindFormToQueryParam();
+  }
+
+  private getNewFormGroup(): FormGroup<{
+    search: FormControl<Nullable<string>>;
+  }> {
+    return new FormGroup({
+      search: new FormControl(''),
+    });
   }
 
   refreshMoviesList() {
@@ -33,7 +66,7 @@ export class MoviesPageComponent {
       });
   }
 
-  populateMovies() {
+  bindStoreToMovies() {
     this.fetchMovies()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((movies) => {
@@ -41,10 +74,51 @@ export class MoviesPageComponent {
       });
   }
 
+  bindFormToQueryParam() {
+    this.fetchFilterChange()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(({ search }) => {
+        const queryParams: Params = {};
+        if (search) {
+          queryParams['search term'] = search;
+        }
+
+        this.router.navigate([], { queryParams });
+      });
+  }
+
+  fetchFilterChange() {
+    return this.form.valueChanges.pipe(
+      startWith({ search: undefined }),
+      debounceTime(500),
+      distinctUntilChanged(),
+    );
+  }
+
   fetchMovies() {
-    return this.store.select(MoviesState.all).pipe(
-      map((movies) => {
-        return movies ?? [];
+    const movieStore$ = this.store.select(MoviesState.all);
+    const filters$ = this.fetchFilterChange();
+
+    return combineLatest({
+      movies: movieStore$,
+      filters: filters$,
+    }).pipe(
+      map(({ movies, filters }) => {
+        if (!movies || !filters.search) {
+          return movies;
+        }
+
+        let filtered = movies;
+        if (filters?.search) {
+          filtered = filtered.filter((movie) => {
+            return [movie.title, movie.id]
+              .join('|')
+              .toLowerCase()
+              .includes((filters.search ?? '').toLowerCase());
+          });
+        }
+
+        return filtered;
       }),
     );
   }

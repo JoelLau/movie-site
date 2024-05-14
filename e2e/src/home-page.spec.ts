@@ -4,7 +4,7 @@ import { MOVIES } from 'e2e/fixtures/movies';
 const HOMEPAGE_URL = '/';
 
 test('window title', async ({ page }) => {
-  await page.goto(HOMEPAGE_URL);
+  await page.goto(HOMEPAGE_URL, { waitUntil: 'domcontentloaded' });
 
   expect(await page.title()).toBe('Movies');
 });
@@ -16,7 +16,7 @@ test('lists top 10 popular movies', async ({ page }) => {
     await route.fulfill({ json: mockResponse });
   });
 
-  await page.goto(HOMEPAGE_URL);
+  await page.goto(HOMEPAGE_URL, { waitUntil: 'domcontentloaded' });
 
   const movieListItems = page.locator('.movie-list__item');
   const imageAlts = await movieListItems.evaluateAll((list) =>
