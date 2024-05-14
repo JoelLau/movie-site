@@ -1,3 +1,4 @@
+import { URL } from 'url';
 import { test, expect } from '@playwright/test';
 import { MOVIES } from 'e2e/fixtures/movies';
 
@@ -30,9 +31,12 @@ test('search for movies', async ({ page }) => {
     .getByRole('textbox', { name: /search movies/i })
     .fill('The Lord of the Rings');
 
-  // wait for debounce to happen
+  // wait for debounce after typing
   // eslint-disable-next-line playwright/no-wait-for-timeout
   await page.waitForTimeout(500);
+
+  expect(page.url()).toContain(encodeURIComponent('search term'));
+  expect(page.url()).toContain(encodeURIComponent('The Lord of the Rings'));
 
   const movieListItems = page.locator('.movie-list__item');
   const imageAlts = await movieListItems.evaluateAll((list) =>

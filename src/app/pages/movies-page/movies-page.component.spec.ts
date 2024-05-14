@@ -17,7 +17,6 @@ describe.skip(MoviesPageComponent.name, () => {
         FormsModule,
         ReactiveFormsModule,
       ],
-      providers: [{}],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesPageComponent);

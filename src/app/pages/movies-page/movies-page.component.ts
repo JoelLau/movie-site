@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Params, Router, RouterModule } from '@angular/router';
 import { NgxsModule, Store } from '@ngxs/store';
 import {
   Subject,
@@ -22,11 +22,13 @@ import { Nullable } from '@shared/type-helpers';
   selector: 'app-movies-page',
   standalone: true,
   imports: [
-    // Angular-specific
+    // Angular
     CommonModule,
-    RouterModule,
-    NgxsModule,
     ReactiveFormsModule,
+    RouterModule,
+
+    // Third-party
+    NgxsModule,
   ],
   templateUrl: './movies-page.component.html',
   styleUrl: './movies-page.component.scss',
@@ -38,9 +40,13 @@ export class MoviesPageComponent {
 
   form = this.getNewFormGroup();
 
-  constructor(private readonly store: Store) {
+  constructor(
+    private readonly store: Store,
+    private readonly router: Router,
+  ) {
     this.refreshMoviesList();
     this.bindStoreToMovies();
+    this.bindFormToQueryParam();
   }
 
   private getNewFormGroup(): FormGroup<{
@@ -68,17 +74,34 @@ export class MoviesPageComponent {
       });
   }
 
+  bindFormToQueryParam() {
+    this.fetchFilterChange()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(({ search }) => {
+        const queryParams: Params = {};
+        if (search) {
+          queryParams['search term'] = search;
+        }
+
+        this.router.navigate([], { queryParams });
+      });
+  }
+
+  fetchFilterChange() {
+    return this.form.valueChanges.pipe(
+      startWith({ search: undefined }),
+      debounceTime(500),
+      distinctUntilChanged(),
+    );
+  }
+
   fetchMovies() {
     const movieStore$ = this.store.select(MoviesState.all);
-    const formValues$ = this.form.valueChanges.pipe(
-      startWith({ search: undefined }),
-      distinctUntilChanged(),
-      debounceTime(500),
-    );
+    const filters$ = this.fetchFilterChange();
 
     return combineLatest({
       movies: movieStore$,
-      filters: formValues$,
+      filters: filters$,
     }).pipe(
       map(({ movies, filters }) => {
         if (!movies || !filters.search) {
