@@ -12,9 +12,10 @@ import {
   startWith,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { Refresh } from '@shared/state/movies/movies.actions';
-import { Movie } from '@shared/state/movies/movies.models';
+import { Movie, Movies } from '@shared/state/movies/movies.models';
 import { MoviesState } from '@shared/state/movies/movies.state';
 import { Nullable } from '@shared/type-helpers';
 
@@ -34,7 +35,8 @@ import { Nullable } from '@shared/type-helpers';
   styleUrl: './movies-page.component.scss',
 })
 export class MoviesPageComponent {
-  movies?: Movie[];
+  movies?: Movies;
+  genres?: Genres;
 
   destroyed$ = new Subject();
 
@@ -46,14 +48,17 @@ export class MoviesPageComponent {
   ) {
     this.refreshMoviesList();
     this.bindStoreToMovies();
+    this.bindStoreToGenres();
     this.bindFormToQueryParam();
   }
 
   private getNewFormGroup(): FormGroup<{
     search: FormControl<Nullable<string>>;
+    genres: FormControl<Nullable<string[]>>;
   }> {
     return new FormGroup({
       search: new FormControl(''),
+      genres: new FormControl([] as string[]),
     });
   }
 
@@ -77,19 +82,44 @@ export class MoviesPageComponent {
   bindFormToQueryParam() {
     this.fetchFilterChange()
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ search }) => {
+      .subscribe(({ search, genres }) => {
         const queryParams: Params = {};
         if (search) {
           queryParams['search term'] = search;
+        }
+        if (genres.length) {
+          queryParams['genres'] = genres.join(',');
         }
 
         this.router.navigate([], { queryParams });
       });
   }
 
+  bindStoreToGenres() {
+    this.fetchMovies()
+      .pipe(
+        map((movies) => {
+          if (!movies) {
+            return undefined;
+          }
+
+          const set = movies.reduce((prev, curr) => {
+            return new Set([...prev, ...curr.genres]);
+          }, new Set<string>());
+
+          return Array.from(set);
+        }),
+        takeUntil(this.destroyed$),
+      )
+      .subscribe((genres) => {
+        this.genres = genres;
+      });
+  }
+
   fetchFilterChange() {
     return this.form.valueChanges.pipe(
-      startWith({ search: undefined }),
+      startWith({ search: undefined, genres: undefined }),
+      map((x) => JSON.parse(JSON.stringify(x))),
       debounceTime(500),
       distinctUntilChanged(),
     );
@@ -104,13 +134,14 @@ export class MoviesPageComponent {
       filters: filters$,
     }).pipe(
       map(({ movies, filters }) => {
-        if (!movies || !filters.search) {
+        if (!movies || !filters) {
           return movies;
         }
 
-        let filtered = movies;
+        let filteredList = movies;
+
         if (filters?.search) {
-          filtered = filtered.filter((movie) => {
+          filteredList = filteredList.filter((movie) => {
             return [movie.title, movie.id]
               .join('|')
               .toLowerCase()
@@ -118,7 +149,15 @@ export class MoviesPageComponent {
           });
         }
 
-        return filtered;
+        if ((filters?.genres ?? []).length) {
+          filteredList = filteredList.filter((movie) => {
+            return (filters?.genres ?? []).find((genre: string) => {
+              return movie.genres.has(genre);
+            });
+          });
+        }
+
+        return filteredList;
       }),
     );
   }
@@ -126,4 +165,11 @@ export class MoviesPageComponent {
   trackMovieBy(_index: number, movie: Movie) {
     return movie?.id;
   }
+
+  trackGenreBy(_index: number, genre: Genre) {
+    return genre;
+  }
 }
+
+export type Genres = Genre[];
+export type Genre = string;
