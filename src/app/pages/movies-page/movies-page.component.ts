@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Params, Router, RouterModule } from '@angular/router';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
-import { NgxsModule, Store } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import {
   Subject,
   combineLatest,
@@ -13,7 +13,6 @@ import {
   startWith,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { Refresh } from '@shared/state/movies/movies.actions';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
@@ -108,7 +107,7 @@ export class MoviesPageComponent {
             return new Set([...prev, ...curr.genres]);
           }, new Set<string>());
 
-          return Array.from(set);
+          return Array.from(set).sort();
         }),
         takeUntil(this.destroyed$),
       )
