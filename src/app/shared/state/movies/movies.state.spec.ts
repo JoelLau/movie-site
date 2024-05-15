@@ -3,13 +3,8 @@ import { NgxsModule, Store } from '@ngxs/store';
 import { MockProviders } from 'ng-mocks';
 import { MovieStateModel, Movies } from './movies.models';
 import { MoviesState, NAME } from './movies.state';
-import {
-  NAME as MOVIESPAGE_NAME,
-  MoviesPageFiltersState,
-  MoviesPageFiltersStateModel,
-} from '@pages/movies-page/movies-page-filters.state';
-import { MoviesApiService } from '@services/movies-api/movies-api.service';
 import { MOCK_MOVIES } from '@tests/mock-movies.data';
+import { MoviesApiService } from '@services/movies-api/movies-api.service';
 
 describe(MoviesState.name, () => {
   let store: Store;
@@ -17,7 +12,7 @@ describe(MoviesState.name, () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        NgxsModule.forRoot([MoviesState, MoviesPageFiltersState], {
+        NgxsModule.forRoot([MoviesState], {
           developmentMode: true,
         }),
       ],
@@ -52,7 +47,11 @@ describe(MoviesState.name, () => {
       });
 
       const reduceFn = store.selectSnapshot(MoviesState.reduceMovieFn<Movies>);
-      expect(reduceFn((prev) => {return prev}, [])).toEqual([])
+      expect(
+        reduceFn((prev) => {
+          return prev;
+        }, []),
+      ).toEqual([]);
     });
   });
 });

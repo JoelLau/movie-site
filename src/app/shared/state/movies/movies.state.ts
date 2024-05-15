@@ -32,27 +32,3 @@ export class MoviesState {
     return state.setState(action.newMovieList);
   }
 }
-
-function filterBySearchTerm(
-  movies: Optional<Movies>,
-  searchTerm: string,
-): Optional<Movies> {
-  if (!searchTerm) return movies?.slice();
-
-  return movies?.filter(({ id, title }) => {
-    const haystack = [id, title].join('|').toLowerCase();
-    const needle = searchTerm.trim().toLowerCase();
-
-    return haystack.includes(needle);
-  });
-}
-
-function filterByGenres(
-  movies: Optional<Movies>,
-  genres: string[],
-): Optional<Movies> {
-  if (genres.length == 0) {
-    return movies;
-  }
-  return movies?.filter(() => true);
-}
