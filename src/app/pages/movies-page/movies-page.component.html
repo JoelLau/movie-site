@@ -1,4 +1,4 @@
-<p>home-page works!</p>
+<p>movies-page works!</p>
 
 <aside class="side-menu">
   <nav>
@@ -23,10 +23,10 @@
         type="text"
         name="movie-search-bar"
         id="movie-search-bar"
-        placeholder="Search Movies"
-        formControlName="search"
+        placeholder="Search Terms"
+        formControlName="searchTerms"
       />
-      <button type="button" (click)="this.form.controls.search.reset">clear</button>
+      <button type="button" (click)="this.form.controls.searchTerms.setValue('')">clear</button>
     </div>
     <div>
       <label for="genre-filter">

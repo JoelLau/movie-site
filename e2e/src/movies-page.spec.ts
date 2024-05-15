@@ -1,5 +1,4 @@
-import { URL } from 'url';
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { MOVIES } from 'e2e/fixtures/movies';
 
 const MOVIESPAGE_URL = '/movies';
@@ -35,7 +34,7 @@ test('search for movies', async ({ page }) => {
   // eslint-disable-next-line playwright/no-wait-for-timeout
   await page.waitForTimeout(500);
 
-  expect(page.url()).toContain(encodeURIComponent('search term'));
+  expect(page.url()).toContain(encodeURIComponent('searchTerms'));
   expect(page.url()).toContain(encodeURIComponent('The Lord of the Rings'));
 
   const movieListItems = page.locator('.movie-list__item');

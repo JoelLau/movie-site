@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Subject, map, take, takeUntil } from 'rxjs';
-import { Store } from '@ngxs/store';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { map, take } from 'rxjs';
+import { MoviesService } from '@services/movies/movies.service';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
-import { MoviesState } from '@shared/state/movies/movies.state';
-import { Refresh } from '@shared/state/movies/movies.actions';
 import { Optional } from '@shared/type-helpers';
 
 @Component({
@@ -14,50 +16,45 @@ import { Optional } from '@shared/type-helpers';
   imports: [CommonModule, RouterModule],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePageComponent {
   popularMovies?: Movie[];
 
-  destroyed$ = new Subject();
-
-  constructor(private readonly store: Store) {
-    this.refreshMoviesList();
-    this.populatePopularMovies();
+  constructor(
+    private readonly moviesService: MoviesService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
+    this.bindPopularMovies();
   }
 
-  refreshMoviesList() {
-    this.store
-      .dispatch(Refresh)
+  fetchTopMovies() {
+    return this.moviesService.fetchMovieList().pipe(
+      map((movies) => sortByPopularity(movies)),
+      map((movies) => getFirstX(movies, 10)),
+    );
+  }
+
+  bindPopularMovies() {
+    return this.fetchTopMovies()
       .pipe(take(1))
-      .subscribe(() => {
-        console.log('refresh complete');
-      });
-  }
-
-  populatePopularMovies() {
-    this.fetchMovies()
-      .pipe(
-        map((x) => x.slice()),
-        map((movies: Optional<Movies>) =>
-          movies?.sort((a, b) => b.popularity - a.popularity),
-        ),
-        map((movies) => movies?.slice(0, 10)),
-        takeUntil(this.destroyed$),
-      )
       .subscribe((movies) => {
         this.popularMovies = movies;
+        this.cdr.markForCheck();
       });
-  }
-
-  fetchMovies() {
-    return this.store.select(MoviesState.all).pipe(
-      map((movies) => {
-        return movies ?? [];
-      }),
-    );
   }
 
   trackMovieBy(_index: number, movie: Movie) {
     return movie?.id;
   }
+}
+
+function sortByPopularity(movies: Optional<Movies>): Optional<Movies> {
+  return movies?.sort(
+    (a, b) => parseFloat(b.popularity) - parseFloat(a.popularity),
+  );
+}
+
+function getFirstX(movies: Optional<Movies>, x: number): Optional<Movies> {
+  return movies?.slice(0, x);
 }
