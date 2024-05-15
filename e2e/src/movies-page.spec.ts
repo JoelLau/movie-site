@@ -1,5 +1,4 @@
-import { URL } from 'url';
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { MOVIES } from 'e2e/fixtures/movies';
 
 const MOVIESPAGE_URL = '/movies';

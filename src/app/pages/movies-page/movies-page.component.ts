@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
-import { Subject } from 'rxjs';
-import { MoviesPageFilters, NAME } from './movies-page-filters.state';
+import {
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  startWith,
+  takeUntil,
+} from 'rxjs';
+import { MoviesPageFilters } from './movies-page.models';
 import { MoviesPageService } from './movies-page.service';
 import { TypedFormGroup } from '@shared/type-helpers';
 import {
@@ -36,7 +37,6 @@ import {
 })
 export class MoviesPageComponent implements OnDestroy {
   readonly DEBOUNCE_TIME = 500;
-  readonly FORMSTATE_KEY = NAME;
 
   movies?: Movies;
   genres?: Genres;
@@ -44,14 +44,24 @@ export class MoviesPageComponent implements OnDestroy {
   destroyed$ = new Subject();
 
   // Avoid direct access!
-  // use `MoviesPageService.fetchFilters()` instead
-  form: TypedFormGroup<MoviesPageFilters> = createFiltersForm();
+  // prefer `this.formValues$` instead
+  form: TypedFormGroup<MoviesPageFilters> = createFiltersForm(
+    this.activatedRoute.snapshot.queryParams,
+  );
+  formValues$ = this.form.valueChanges.pipe(
+    distinctUntilChanged(),
+    debounceTime(this.DEBOUNCE_TIME),
+    takeUntil(this.destroyed$),
+  );
+
+  queryParams$ = this.activatedRoute.queryParams.pipe(
+    startWith(this.activatedRoute.snapshot.queryParams),
+  );
 
   constructor(
-    private readonly moviesService: MoviesPageService,
-    private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly moviesPageService: MoviesPageService,
   ) {
     // ====
     // TL;DR: form -> queryParams -> filtered items
@@ -63,78 +73,29 @@ export class MoviesPageComponent implements OnDestroy {
     //    - filtered list of genres
     //
     this.bindFormToQueryParams();
+    this.autoUpdateMovies();
+    this.autoUpdateGenres();
   }
 
   bindFormToQueryParams() {
-    this.form.valueChanges.pipe().subscribe(({ searchTerms, genres }) => {
-      const queryParams: Params = {};
-
-      if (searchTerms) {
-        queryParams['searchTerms'] = searchTerms;
-      }
-
-      if ((genres ?? []).length > 0) {
-        queryParams['genres'] = genres?.join(',');
-      }
-
+    this.formValues$.subscribe((values) => {
       this.router.navigate([], {
         relativeTo: this.activatedRoute,
-        queryParams,
+        queryParams: serializeFilter(values),
       });
     });
   }
 
-  createNewFiltersForm() {
-    const form = createFiltersForm();
-
-    // set form fields (once)
-    const queryParams = this.activatedRoute.snapshot.queryParams;
-
-    if (queryParams['searchTerms']) {
-      form.patchValue({ searchTerms: queryParams['searchTerms'] });
-    }
-
-    if (queryParams['genres']) {
-      form.patchValue({ genres: queryParams['genres'].split(',') });
-    }
-
-    return form;
+  autoUpdateMovies() {
+    return this.moviesPageService.fetchFilteredMovies().subscribe((movies) => {
+      this.movies = movies;
+    });
   }
-
-  // store filter changes to url
-  // bindQueryParams() {
-  //   const filter$ = this.form.valueChanges.pipe(
-  //     debounceTime(500),
-  //     distinctUntilChanged(),
-  //   );
-
-  //   return filter$
-  //     .pipe(
-  //       map(({ genres, ...rest }) => {
-  //         const queryParams: Params = { ...rest };
-
-  //         // genre requires remapping
-  //         const genreArr = genres ?? [];
-  //         if (genreArr.length > 0) {
-  //           queryParams['genres'] = genreArr.join(',');
-  //         }
-
-  //         return queryParams;
-  //       }),
-  //     )
-  //     .subscribe((queryParams) => {
-  //       this.router.navigate([], {
-  //         relativeTo: this.activatedRoute,
-  //         queryParams,
-  //       });
-  //     });
-  // }
-
-  // bindFilterState() {
-  //   return this.activatedRoute.queryParams.subscribe(() => {
-  //     console.log('filter updated');
-  //   });
-  // }
+  autoUpdateGenres() {
+    return this.moviesPageService.fetchFilteredGenres().subscribe((genres) => {
+      this.genres = genres;
+    });
+  }
 
   trackMovieBy(_index: number, movie?: Movie) {
     return movie?.id;
@@ -150,11 +111,38 @@ export class MoviesPageComponent implements OnDestroy {
   }
 }
 
-function createFiltersForm() {
-  const nonNullable = true;
+const nonNullable = true;
 
-  return new FormGroup({
+function createFiltersForm(params: Params) {
+  const form = new FormGroup({
     searchTerms: new FormControl<string>('', { nonNullable }),
     genres: new FormControl<string[]>([], { nonNullable }),
   });
+
+  if (params['searchTerms']) {
+    form.controls.searchTerms.setValue(params['searchTerms']);
+  }
+
+  if (params['genres']) {
+    form.controls.genres.setValue(params['genres'].split(','));
+  }
+
+  return form;
+}
+
+function serializeFilter({
+  searchTerms,
+  genres,
+}: Partial<MoviesPageFilters>): Params {
+  const queryParams: Params = {};
+
+  if (searchTerms) {
+    queryParams['searchTerms'] = searchTerms;
+  }
+
+  if ((genres ?? []).length > 0) {
+    queryParams['genres'] = genres?.join(',');
+  }
+
+  return queryParams;
 }

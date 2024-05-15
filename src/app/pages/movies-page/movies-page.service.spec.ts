@@ -1,15 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
 import { MockProvider } from 'ng-mocks';
-import { of } from 'rxjs';
+import { RouterModule } from '@angular/router';
 import { MoviesPageService } from './movies-page.service';
 import { MoviesApiService } from '@services/movies-api/movies-api.service';
-import {
-  NAME as MOVIESSTATE_NAME,
-  MoviesState,
-} from '@shared/state/movies/movies.state';
 import { StoreModule } from '@shared/state/store.module';
-import { MOCK_MOVIES } from '@tests/mock-movies.data';
 
 describe(MoviesPageService.name, () => {
   let service: MoviesPageService;
@@ -17,7 +12,7 @@ describe(MoviesPageService.name, () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [StoreModule],
+      imports: [StoreModule, RouterModule.forRoot([])],
       providers: [MockProvider(MoviesApiService)],
     });
 

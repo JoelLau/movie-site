@@ -1,21 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { NgxsFormPluginModule } from '@ngxs/form-plugin';
-import { NgxsModule } from '@ngxs/store';
-import { Observable, of } from 'rxjs';
-import { MoviesPageFiltersState } from './movies-page-filters.state';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { NgxsModule, Store } from '@ngxs/store';
+import { of } from 'rxjs';
 import { MoviesPageComponent } from './movies-page.component';
 import { MoviesPageService } from './movies-page.service';
-import { Movies } from '@shared/state/movies/movies.models';
+import { Genres, Movies } from '@shared/state/movies/movies.models';
 import { MoviesState } from '@shared/state/movies/movies.state';
-import { Optional } from '@shared/type-helpers';
-import { generateMockMovies } from '@tests/movie-generator';
+import { MOCK_MOVIES } from '@tests/mock-movies.data';
 
 describe(MoviesPageComponent.name, () => {
   let component: MoviesPageComponent;
   let fixture: ComponentFixture<MoviesPageComponent>;
+
   let activatedRoute: ActivatedRoute;
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -28,24 +32,24 @@ describe(MoviesPageComponent.name, () => {
         RouterModule.forRoot([]),
 
         // Third Party dependencies
-        NgxsModule.forRoot([MoviesState, MoviesPageFiltersState], {
+        NgxsModule.forRoot([MoviesState], {
           developmentMode: true,
         }),
-        NgxsFormPluginModule.forRoot(),
       ],
       providers: [
         {
           provide: MoviesPageService,
           useValue: {
-            fetchMovieList: () => of([]),
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            fetchGenres: (movies$: Observable<Optional<Movies>>) => of([]),
+            fetchFilteredMovies: () => of([]),
+            fetchFilteredGenres: () => of([]),
           },
         },
       ],
     }).compileComponents();
 
     activatedRoute = TestBed.inject(ActivatedRoute);
+    router = TestBed.inject(Router);
+
     fixture = TestBed.createComponent(MoviesPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -55,20 +59,69 @@ describe(MoviesPageComponent.name, () => {
     expect(component).toBeTruthy();
   });
 
-  it('should update query params when form values change', async () => {
+  it('should update query params when form values change', fakeAsync(() => {
+    // sanity check
     expect(activatedRoute.snapshot.queryParams).toEqual({});
+
     component.form.patchValue({
       genres: ['Fantasy', 'Drama'],
       searchTerms: 'the lord of the rings',
     });
 
     fixture.detectChanges();
-    await fixture.whenStable();
+    tick(component.DEBOUNCE_TIME);
 
-    activatedRoute = TestBed.inject(ActivatedRoute);
-    expect(activatedRoute.snapshot.queryParams).toEqual({
-      genres: 'Fantasy,Drama',
-      searchTerms: 'the lord of the rings',
+    fixture.whenStable().then(() => {
+      activatedRoute = TestBed.inject(ActivatedRoute);
+      expect(activatedRoute.snapshot.queryParams).toEqual({
+        genres: 'Fantasy,Drama',
+        searchTerms: 'the lord of the rings',
+      });
     });
-  });
+  }));
+
+  it('should repopulate movies when query params change', fakeAsync(() => {
+    expect(component.movies ?? []).toEqual([]);
+
+    const movies: Movies = MOCK_MOVIES.slice(0, 2);
+    const moviesPageService = TestBed.inject(MoviesPageService);
+    jest
+      .spyOn(moviesPageService, 'fetchFilteredMovies')
+      .mockReturnValue(of(movies));
+
+    fixture = TestBed.createComponent(MoviesPageComponent); // re-trigger constructor
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    router.navigate([], {
+      queryParams: { searchTerms: '', genres: [] },
+      relativeTo: activatedRoute,
+    });
+    tick(component.DEBOUNCE_TIME);
+
+    expect(component.movies).toEqual(movies);
+  }));
+
+  it('should repopulate genres when query params change', fakeAsync(() => {
+    expect(component.genres ?? []).toEqual([]);
+
+    const mockGenres: Genres = ['Action', 'Adventure', 'Drama'];
+    const moviesPageService = TestBed.inject(MoviesPageService);
+    jest
+      .spyOn(moviesPageService, 'fetchFilteredGenres')
+      .mockReturnValue(of(mockGenres));
+
+    fixture = TestBed.createComponent(MoviesPageComponent); // re-trigger constructor
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    router.navigate([], {
+      queryParams: { searchTerms: '', genres: [] },
+      relativeTo: activatedRoute,
+    });
+
+    tick(component.DEBOUNCE_TIME);
+
+    expect(component.genres).toEqual(mockGenres);
+  }));
 });
