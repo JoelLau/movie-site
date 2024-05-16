@@ -5,16 +5,24 @@ import {
   Component,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    // Angular
+    CommonModule,
+    RouterModule,
+
+    // Custom
+    BaseLayoutComponent,
+  ],
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './home-page.component.html',
 })
 export class HomePageComponent {
   popularMovies?: Movies;

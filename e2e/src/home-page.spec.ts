@@ -14,7 +14,10 @@ test('lists top 10 popular movies', async ({ page }) => {
   mockMovieApiResponse(page);
 
   const homePage = new HomePage(page);
-  await homePage.visit();
+  await Promise.all([
+    homePage.visit(),
+    page.waitForURL('*/**/assets/movie.mock-data.json'),
+  ]);
 
   const listItems = await homePage.getPopularMovieListItems();
   const imageAlts = await getImageAlts(listItems);

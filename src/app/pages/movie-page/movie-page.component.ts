@@ -1,16 +1,24 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable, map, of, switchMap } from 'rxjs';
-import { Movie, Movies } from '@shared/state/movies/movies.models';
+import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
+import { Movie, Movies } from '@shared/state/movies/movies.models';
 import { TrackMoviePageVisit } from '@shared/state/user/user.actions';
 
 @Component({
   selector: 'app-movie-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    // Angular
+    CommonModule,
+    RouterModule,
+
+    // Custom
+    BaseLayoutComponent,
+  ],
   templateUrl: './movie-page.component.html',
   styleUrl: './movie-page.component.scss',
 })

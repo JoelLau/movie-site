@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { MoviesPageFilters } from './movies-page.models';
 import { MoviesPageService } from './movies-page.service';
+import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
 import {
   Genre,
@@ -32,6 +33,9 @@ import { TypedFormGroup } from '@shared/type-helpers';
 
     // Third-party
     NgxsFormPluginModule,
+
+    // Custom
+    BaseLayoutComponent,
   ],
   templateUrl: './movies-page.component.html',
   styleUrl: './movies-page.component.scss',

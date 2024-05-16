@@ -10,7 +10,7 @@ export class HomePage {
   }
 
   async visit() {
-    return await this.page.goto(this.URL, { waitUntil: 'domcontentloaded' });
+    return await this.page.goto(this.URL);
   }
 
   async getPopularMovieListItems() {
