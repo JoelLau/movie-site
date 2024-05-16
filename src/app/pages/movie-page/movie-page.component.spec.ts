@@ -41,5 +41,5 @@ describe(MoviePageComponent.name, () => {
   it('movie not found', () => {
     const rendered: HTMLElement = fixture.debugElement.nativeElement;
     expect(rendered.querySelector('[data-testid=not-found]')).toBeTruthy();
-  })
+  });
 });
