@@ -1,5 +1,4 @@
 import { Route } from '@angular/router';
-import { movieSlugResolverResolver } from '@shared/resolver/movie-slug-resolver.resolver';
 
 export const appRoutes: Route[] = [
   {
@@ -25,6 +24,5 @@ export const appRoutes: Route[] = [
       import('@pages/movie-page/movie-page.component').then(
         (m) => m.MoviePageComponent,
       ),
-    resolve: { movie: movieSlugResolverResolver },
   },
 ];

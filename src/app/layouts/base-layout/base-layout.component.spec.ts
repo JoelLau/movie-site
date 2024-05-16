@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { BaseLayoutComponent } from './base-layout.component';
 
@@ -24,5 +25,9 @@ describe(BaseLayoutComponent.name, () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it.each(['app-side-menu'])('%s', (selector) => {
+    expect(fixture.debugElement.query(By.css(selector))).toBeTruthy();
   });
 });
