@@ -1,17 +1,10 @@
 <div class="base-layout stacked">
   <h1>Movies</h1>
   <div class="middle-section">
-      <aside class="side-menu">
-          <nav>
-            <ul>
-              <li><a routerLink="/">Home</a></li>
-              <li><a routerLink="/movies">Movies</a></li>
-            </ul>
-          </nav>
-      </aside>
-      <div class="page-content">
-          <ng-content></ng-content>
-      </div>
+    <app-side-menu></app-side-menu>
+    <div class="page-content">
+        <ng-content></ng-content>
+    </div>
   </div>
   <footer class="page-footers">
   </footer>
