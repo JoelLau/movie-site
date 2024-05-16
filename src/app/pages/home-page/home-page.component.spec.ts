@@ -3,15 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { HomePageComponent } from './home-page.component';
-import { MoviesService } from '@services/movies/movies.service';
 import { generateMockMovies } from '@tests/movie-generator';
-
-const MovieServiceProvider = {
-  provide: MoviesService,
-  useValue: {
-    fetchMovieList: () => of([]),
-  },
-};
+import { MoviesService } from '@services/movies/movies.service';
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;
@@ -26,7 +19,15 @@ describe(HomePageComponent.name, () => {
         // Angular dependencies
         RouterModule.forRoot([]),
       ],
-      providers: [MovieServiceProvider],
+      providers: [
+        {
+          provide: MoviesService,
+          useValue: {
+            fetchXMostPopularMovies: () => of([]),
+            fetchLastXVisitedMovies: () => of([]),
+          },
+        },
+      ],
     })
       .overrideComponent(HomePageComponent, {
         set: { changeDetection: ChangeDetectionStrategy.Default },
@@ -43,10 +44,13 @@ describe(HomePageComponent.name, () => {
   });
 
   describe('page contents', () => {
-    it.each([' main', '.movie-list', '.side-menu'])('%s', (selector) => {
-      const page: HTMLElement = fixture.debugElement.nativeElement;
-      expect(page.querySelector(selector)).toBeTruthy();
-    });
+    it.each([' main', '.movie-list', '.side-menu', '.visited-movies'])(
+      '%s',
+      (selector) => {
+        const page: HTMLElement = fixture.debugElement.nativeElement;
+        expect(page.querySelector(selector)).toBeTruthy();
+      },
+    );
   });
 
   it('should render `component.popularMovies`', async () => {
@@ -58,6 +62,19 @@ describe(HomePageComponent.name, () => {
 
     const page: HTMLElement = fixture.debugElement.nativeElement;
     expect(page.querySelectorAll('.movie-list__item')).toHaveLength(
+      expectedNumberOfMovies,
+    );
+  });
+
+  it('should render `component.popularMovies`', async () => {
+    const expectedNumberOfMovies = 5;
+    component.lastVisitedMovies = generateMockMovies(expectedNumberOfMovies);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const page: HTMLElement = fixture.debugElement.nativeElement;
+    expect(page.querySelectorAll('.visited-movies__item')).toHaveLength(
       expectedNumberOfMovies,
     );
   });

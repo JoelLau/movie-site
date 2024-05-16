@@ -90,7 +90,3 @@ function evaluateMovie(movie: Movie, filter: MoviesPageFilters): boolean {
 
   return true;
 }
-
-// function makeUnique<T>(arr: T[]): T[] {
-//   return Array.from(new Set(arr));
-// }

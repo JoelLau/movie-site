@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Movie } from '@shared/state/movies/movies.models';
+import { Store } from '@ngxs/store';
+import { Observable, map, of, switchMap } from 'rxjs';
+import { Movie, Movies } from '@shared/state/movies/movies.models';
+import { MoviesService } from '@services/movies/movies.service';
+import { TrackMoviePageVisit } from '@shared/state/user/user.actions';
 
 @Component({
   selector: 'app-movie-page',
@@ -11,7 +15,52 @@ import { Movie } from '@shared/state/movies/movies.models';
   styleUrl: './movie-page.component.scss',
 })
 export class MoviePageComponent {
-  movie?: Movie = this.activatedRoute.snapshot.data['movie'];
+  movie?: Movie;
+  lastVisitedMovies?: Movies;
 
-  constructor(private readonly activatedRoute: ActivatedRoute) {}
+  movieLoaded = true;
+  lastVisitedMoviesLoaded = true;
+  slug$: Observable<string | undefined> = this.activatedRoute.params.pipe(
+    map((param) => param['slug']),
+  );
+
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly store: Store,
+    private readonly moviesService: MoviesService,
+  ) {
+    this.autoUpdateMovie();
+    this.autoUpdateLastVisitedMovies();
+  }
+
+  trackVisit(movie?: Movie) {
+    if (!movie) return of(undefined);
+
+    return this.store.dispatch(new TrackMoviePageVisit(movie));
+  }
+
+  autoUpdateMovie() {
+    return this.slug$
+      .pipe(
+        switchMap((slug: string | undefined) => {
+          return slug ? this.moviesService.fetchMovie(slug) : of(undefined);
+        }),
+      )
+      .subscribe((movie) => {
+        this.movie = movie;
+        this.trackVisit(movie);
+        this.movieLoaded = false;
+      });
+  }
+
+  autoUpdateLastVisitedMovies() {
+    return this.moviesService.fetchLastXVisitedMovies(5).subscribe((movies) => {
+      this.lastVisitedMovies = movies;
+      this.lastVisitedMoviesLoaded = false;
+    });
+  }
+
+  trackMovieBy(_index: number, movie: Movie) {
+    return movie?.id;
+  }
 }
