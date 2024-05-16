@@ -18,6 +18,9 @@
         "*.ts",
         "*.tsx"
       ],
+      "extends": [
+        "plugin:@nx/typescript"
+      ],
       "rules": {}
     },
     {
