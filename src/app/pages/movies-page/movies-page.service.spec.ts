@@ -23,25 +23,4 @@ describe(MoviesPageService.name, () => {
   it('sanity', () => {
     expect(true).toBe(true);
   });
-
-  // describe('fetchFilteredMovies', () => {
-  //   it('populates if store is empty', (done) => {
-  //     const mockMovies = MOCK_MOVIES.slice(0, 20);
-  //     const api = TestBed.inject(MoviesApiService);
-  //     jest.spyOn(api, 'fetchAll').mockReturnValue(of(mockMovies));
-
-  //     store.reset({
-  //       ...store.snapshot(),
-  //       [MOVIESSTATE_NAME]: undefined,
-  //     });
-
-  //     service
-  //       .fetchFilteredMovies({ searchTerms: '', genres: [] })
-  //       .subscribe((response) => {
-  //         expect(response).toStrictEqual(mockMovies);
-
-  //         done();
-  //       });
-  //   });
-  // });
 });

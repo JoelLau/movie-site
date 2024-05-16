@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { Replace } from './movies.actions';
 import { INITIAL_STATE, Movie, MovieStateModel, Movies } from './movies.models';
-import { Optional } from '@shared/type-helpers';
 
 export const NAME = 'movies';
 
@@ -15,6 +14,11 @@ export class MoviesState {
   @Selector()
   static movies(state: MovieStateModel) {
     return state;
+  }
+
+  @Selector()
+  static findMovieBySlugFn(movies: MovieStateModel) {
+    return (search: string) => movies?.find(({ slug }) => slug == search);
   }
 
   @Selector()
