@@ -6,11 +6,12 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { NgxsModule, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { movieSlugResolverResolver } from './movie-slug-resolver.resolver';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
 import { MoviesState, NAME } from '@shared/state/movies/movies.state';
 import { Optional } from '@shared/type-helpers';
+import { MoviesService } from '@services/movies/movies.service';
 
 describe(movieSlugResolverResolver.name, () => {
   const executeResolver: ResolveFn<Optional<Movie>> = (...resolverParameters) =>
@@ -24,6 +25,14 @@ describe(movieSlugResolverResolver.name, () => {
         RouterModule.forRoot([]),
         NgxsModule.forRoot([MoviesState], { developmentMode: true }),
       ],
+      providers: [
+        {
+          provide: MoviesService,
+          useValue: {
+            fetchMovie: () => of({}),
+          },
+        },
+      ],
     });
   });
 
@@ -32,7 +41,7 @@ describe(movieSlugResolverResolver.name, () => {
   });
 
   it('return movie if slug exists', fakeAsync(() => {
-    const store = TestBed.inject(Store);
+    const service = TestBed.inject(MoviesService);
     const mockMovie: Movie = {
       id: 'tt0111161',
       title: 'The Shawshank Redemption',
@@ -47,11 +56,7 @@ describe(movieSlugResolverResolver.name, () => {
       genres: ['Drama'],
       budget: 28767189,
     };
-    const mockMovies: Movies = [mockMovie];
-    store.reset({
-      ...store.snapshot(),
-      [NAME]: mockMovies,
-    });
+    jest.spyOn(service, 'fetchMovie').mockReturnValue(of(mockMovie));
 
     const route = {
       params: { slug: 'the-shawshank-redemption' },
@@ -70,12 +75,8 @@ describe(movieSlugResolverResolver.name, () => {
   }));
 
   it("return falsy value if slug doesn't exists", fakeAsync(() => {
-    const store = TestBed.inject(Store);
-    const mockMovies: Movies = [];
-    store.reset({
-      ...store.snapshot(),
-      [NAME]: mockMovies,
-    });
+    const service = TestBed.inject(MoviesService);
+    jest.spyOn(service, 'fetchMovie').mockReturnValue(of(undefined));
 
     const route = {
       params: { slug: 'the-shawshank-redemption' },

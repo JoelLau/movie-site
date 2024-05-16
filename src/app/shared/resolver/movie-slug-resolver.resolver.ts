@@ -1,9 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { Store } from '@ngxs/store';
-import { map } from 'rxjs';
+import { MoviesService } from '@services/movies/movies.service';
 import { Movie } from '@shared/state/movies/movies.models';
-import { MoviesState } from '@shared/state/movies/movies.state';
 import { Optional } from '@shared/type-helpers';
 
 export const movieSlugResolverResolver: ResolveFn<Optional<Movie>> = (
@@ -11,9 +9,8 @@ export const movieSlugResolverResolver: ResolveFn<Optional<Movie>> = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   state, // required by test files
 ) => {
-  const store = inject(Store);
   const slug = route.params['slug'];
-  return store
-    .select(MoviesState.findMovieBySlugFn)
-    .pipe(map((findMovieBySlug) => findMovieBySlug(slug)));
+  const service = inject(MoviesService);
+
+  return service.fetchMovie(slug);
 };

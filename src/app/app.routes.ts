@@ -20,7 +20,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'movies/:slug',
-    pathMatch: 'full',
+    pathMatch: 'prefix',
     loadComponent: () =>
       import('@pages/movie-page/movie-page.component').then(
         (m) => m.MoviePageComponent,

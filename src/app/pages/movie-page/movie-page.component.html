@@ -1,14 +1,30 @@
-<p>movie-page works!</p>
+<ng-container *ngIf="movie; else noMovie">
+  <p>movie-page works!</p>
 
-<aside class="side-menu">
-  <nav>
+  <aside class="side-menu">
+    <nav>
+      <ul>
+        <li>
+          <a routerLink="/" routerLinkActive="active">Home</a>
+        </li>
+        <li>
+          <a routerLink="/movies">Movies</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <main>
+    <h1>{{movie.title}}</h1>
     <ul>
-      <li>
-        <a routerLink="/" routerLinkActive="active">Home</a>
-      </li>
-      <li>
-        <a routerLink="/movies">Movies</a>
-      </li>
+      <li *ngFor="let genre of movie.genres">{{genre}}</li>
     </ul>
-  </nav>
-</aside>
+    <p>popularity: <span>{{movie.popularity | number: '0.2-2'}}</span></p>
+    <p>budget: <span>{{movie.budget | currency: 'EUR' }}</span></p>
+  </main>
+</ng-container>
+
+<ng-template #noMovie>
+  <main data-testid="not-found">
+    not found
+  </main>
+</ng-template>

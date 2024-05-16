@@ -22,4 +22,12 @@ export class MoviesService {
       map((movies) => movies?.slice()), // creates mutable copy
     );
   }
+
+  fetchMovie(slug?: string) {
+    return this.api.fetchAll().pipe(
+      switchMap((movies) => this.store.dispatch(new Replace(movies))),
+      switchMap(() => this.store.select(MoviesState.findMovieBySlugFn)),
+      map((findMovieBySlug) => findMovieBySlug(slug ?? '')),
+    );
+  }
 }
