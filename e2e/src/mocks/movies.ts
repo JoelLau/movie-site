@@ -1,4 +1,6 @@
-export const MOVIES: unknown[] = [
+import { Movie } from '@types/movie.type';
+
+export const MOCK_MOVIES: Movie[] = [
   {
     id: 'tt0111161',
     title: 'The Shawshank Redemption',

@@ -1,27 +1,23 @@
-import { test, expect } from '@playwright/test';
-import { MOVIES } from 'e2e/fixtures/movies';
+import { expect, test } from '@playwright/test';
+import { getImageAlts } from '@utils/img-alts.util';
+import { mockMovieApiResponse } from '@utils/mock-response.util';
+import { HomePage } from '@utils/pageobjects/home-page.pom';
 
-const HOMEPAGE_URL = '/';
-
-test('window title', async ({ page }) => {
-  await page.goto(HOMEPAGE_URL, { waitUntil: 'domcontentloaded' });
+test('metadata', async ({ page }) => {
+  const homePage = new HomePage(page);
+  await homePage.visit();
 
   expect(await page.title()).toBe('Movies');
 });
 
 test('lists top 10 popular movies', async ({ page }) => {
-  const mockResponse = MOVIES;
+  mockMovieApiResponse(page);
 
-  await page.route('*/**/assets/movie.mock-data.json', async (route) => {
-    await route.fulfill({ json: mockResponse });
-  });
+  const homePage = new HomePage(page);
+  await homePage.visit();
 
-  await page.goto(HOMEPAGE_URL, { waitUntil: 'domcontentloaded' });
-
-  const movieListItems = page.locator('.movie-list__item');
-  const imageAlts = await movieListItems.evaluateAll((list) =>
-    list.map((element) => element.querySelector('img')?.getAttribute('alt')),
-  );
+  const listItems = await homePage.getPopularMovieListItems();
+  const imageAlts = await getImageAlts(listItems);
 
   expect(imageAlts).toStrictEqual([
     'The Shawshank Redemption',

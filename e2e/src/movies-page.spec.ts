@@ -1,50 +1,66 @@
+import { URL } from 'url';
 import { expect, test } from '@playwright/test';
-import { MOVIES } from 'e2e/fixtures/movies';
+import { getImageAlts } from '@utils/img-alts.util';
+import { mockMovieApiResponse } from '@utils/mock-response.util';
+import { HomePage } from '@utils/pageobjects/home-page.pom';
+import { MoviesPage } from '@utils/pageobjects/movies-page.pom';
+import { getListboxOptionContent } from '@utils/option-names.util';
 
-const MOVIESPAGE_URL = '/movies';
-
-test('window title', async ({ page }) => {
-  await page.goto(MOVIESPAGE_URL, { waitUntil: 'domcontentloaded' });
+test('metadata', async ({ page }) => {
+  const moviesPage = new MoviesPage(page);
+  await moviesPage.visit();
 
   expect(await page.title()).toBe('Movies');
 });
 
 test('navigate from home page', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const homePage = new HomePage(page);
+  await homePage.visit();
 
+  const moviesPage = new MoviesPage(page);
   await page.getByRole('link', { name: /movies/i }).click();
   await page.waitForURL(/movies/i);
-  expect(page.url()).toContain(MOVIESPAGE_URL);
+
+  expect(page.url()).toContain(moviesPage.URL);
 });
 
 test('search for movies', async ({ page }) => {
-  const mockResponse = MOVIES;
+  mockMovieApiResponse(page);
 
-  await page.route('*/**/assets/movie.mock-data.json', async (route) => {
-    await route.fulfill({ json: mockResponse });
-  });
+  const moviesPage = new MoviesPage(page);
+  await moviesPage.visit();
 
-  await page.goto(MOVIESPAGE_URL, { waitUntil: 'domcontentloaded' });
+  await moviesPage.fillMoviesSearch('dog');
+  await page.waitForURL('**/movies?searchTerms**');
 
-  await page
-    .getByRole('textbox', { name: /search/i })
-    .fill('The Lord of the Rings');
+  // query params should update
+  let searchParams = new URL(page.url()).searchParams;
+  expect(searchParams.has('searchTerms')).toBeTruthy();
+  expect(searchParams.get('searchTerms')).toStrictEqual('dog');
 
-  // wait for debounce after typing
-  // eslint-disable-next-line playwright/no-wait-for-timeout
-  await page.waitForTimeout(500);
-
-  expect(page.url()).toContain(encodeURIComponent('searchTerms'));
-  expect(page.url()).toContain(encodeURIComponent('The Lord of the Rings'));
-
-  const movieListItems = page.locator('.movie-list__item');
-  const imageAlts = await movieListItems.evaluateAll((list) =>
-    list.map((element) => element.querySelector('img')?.getAttribute('alt')),
-  );
-
-  expect(imageAlts).toStrictEqual([
-    'The Lord of the Rings: The Return of the King',
-    'The Lord of the Rings: The Fellowship of the Ring',
-    'The Lord of the Rings: The Two Towers',
+  // list of genre filter options should update
+  const genreFilter = await moviesPage.getGenreFilter();
+  const options = await getListboxOptionContent(genreFilter);
+  expect(options).toStrictEqual([
+    'Select a Genre',
+    'Biography',
+    'Crime',
+    'Drama',
+    'Family',
+    'Thriller',
   ]);
+
+  // list of rendered items should update
+  const listItems = await moviesPage.getMovieListItems();
+  const imageAlts = await getImageAlts(listItems);
+  expect(imageAlts).toStrictEqual(['Reservoir Dogs', "Hachi: A Dog's Tale"]);
+
+  // click on a filter
+  await genreFilter.selectOption('Crime');
+  await page.waitForURL('**/movies?**genres**');
+
+  // query params should update
+  searchParams = new URL(page.url()).searchParams;
+  expect(searchParams.has('genres')).toBeTruthy();
+  expect(searchParams.get('genres')).toStrictEqual('Crime');
 });
