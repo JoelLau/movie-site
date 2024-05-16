@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
-import { MockProviders } from 'ng-mocks';
 import { MovieStateModel, Movies } from './movies.models';
 import { MoviesState, NAME } from './movies.state';
-import { MOCK_MOVIES } from '@tests/mock-movies.data';
 import { MoviesApiService } from '@services/movies-api/movies-api.service';
+import { MOCK_MOVIES } from '@tests/mock-movies.data';
 
 describe(MoviesState.name, () => {
   let store: Store;
@@ -16,7 +15,6 @@ describe(MoviesState.name, () => {
           developmentMode: true,
         }),
       ],
-      providers: [[...MockProviders(MoviesApiService)]],
     });
 
     store = TestBed.inject(Store);

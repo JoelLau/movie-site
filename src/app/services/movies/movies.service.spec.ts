@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
-import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MoviesService } from './movies.service';
 import { MoviesApiService } from '@services/movies-api/movies-api.service';
@@ -15,7 +14,14 @@ describe(MoviesService.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [StoreModule],
-      providers: [MockProvider(MoviesApiService)],
+      providers: [
+        {
+          provide: MoviesApiService,
+          useValue: {
+            fetchAll: () => of([]),
+          },
+        },
+      ],
     });
 
     store = TestBed.inject(Store);

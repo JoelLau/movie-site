@@ -1,0 +1,12 @@
+<ng-container>
+    <footer>
+        <h2>Last Visited</h2>
+        <ul class="visited-movies">
+          <li *ngFor="let movie of movies; trackBy: trackMovieBy" class="visited-movies__item">
+            <a *ngIf="movie" [routerLink]="'/movies/' + movie.slug">
+              <img [src]="movie.image.url" [alt]="movie.image.title">
+            </a>
+          </li>
+        </ul>
+      </footer>
+</ng-container>

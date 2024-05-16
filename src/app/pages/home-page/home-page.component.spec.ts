@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { HomePageComponent } from './home-page.component';
-import { generateMockMovies } from '@tests/movie-generator';
 import { MoviesService } from '@services/movies/movies.service';
+import { generateMockMovies } from '@tests/movie-generator';
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;

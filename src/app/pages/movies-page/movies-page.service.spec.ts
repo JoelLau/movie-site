@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngxs/store';
-import { MockProvider } from 'ng-mocks';
 import { RouterModule } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { MoviesPageService } from './movies-page.service';
 import { MoviesApiService } from '@services/movies-api/movies-api.service';
 import { StoreModule } from '@shared/state/store.module';
@@ -13,7 +12,7 @@ describe(MoviesPageService.name, () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [StoreModule, RouterModule.forRoot([])],
-      providers: [MockProvider(MoviesApiService)],
+      providers: [{ provide: MoviesApiService, useValue: {} }],
     });
 
     store = TestBed.inject(Store);

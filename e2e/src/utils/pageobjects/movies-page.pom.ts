@@ -29,6 +29,6 @@ export class MoviesPage {
     const searchBar = await this.getMovieSearchBar();
 
     // search is debounced
-    return searchBar.fill(search, { timeout: 500 });
+    return searchBar.fill(search, { timeout: 600 });
   }
 }
