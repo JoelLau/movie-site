@@ -9,15 +9,15 @@ import { MoviesApiService } from '@services/movies-api/movies-api.service';
 describe(MoviesState.name, () => {
   let store: Store;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [
         NgxsModule.forRoot([MoviesState], {
           developmentMode: true,
         }),
       ],
       providers: [[...MockProviders(MoviesApiService)]],
-    }).compileComponents();
+    });
 
     store = TestBed.inject(Store);
   });

@@ -5,14 +5,15 @@ import {
   tick,
 } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NgxsModule, Store } from '@ngxs/store';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
+import { NgxsModule } from '@ngxs/store';
 import { of } from 'rxjs';
 import { MoviesPageComponent } from './movies-page.component';
 import { MoviesPageService } from './movies-page.service';
 import { Genres, Movies } from '@shared/state/movies/movies.models';
 import { MoviesState } from '@shared/state/movies/movies.state';
 import { MOCK_MOVIES } from '@tests/mock-movies.data';
+import { MoviesService } from '@services/movies/movies.service';
 
 describe(MoviesPageComponent.name, () => {
   let component: MoviesPageComponent;
@@ -42,6 +43,12 @@ describe(MoviesPageComponent.name, () => {
           useValue: {
             fetchFilteredMovies: () => of([]),
             fetchFilteredGenres: () => of([]),
+          },
+        },
+        {
+          provide: MoviesService,
+          useValue: {
+            fetchLastXVisitedMovies: () => of([]),
           },
         },
       ],
@@ -124,4 +131,21 @@ describe(MoviesPageComponent.name, () => {
 
     expect(component.genres).toEqual(mockGenres);
   }));
+
+  it('renders last visited', () => {
+    const numberOfLastVisited = 5;
+    const movies = MOCK_MOVIES.slice(0, numberOfLastVisited);
+    const service = TestBed.inject(MoviesService);
+    service.fetchLastXVisitedMovies = () => of(movies);
+
+    // retrigger constructor
+    fixture = TestBed.createComponent(MoviesPageComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const page: HTMLElement = fixture.debugElement.nativeElement;
+    expect(page.querySelectorAll('.visited-movies__item')).toHaveLength(
+      numberOfLastVisited,
+    );
+  });
 });

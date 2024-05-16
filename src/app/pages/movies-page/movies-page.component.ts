@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { NgxsFormPluginModule } from '@ngxs/form-plugin';
@@ -12,13 +12,14 @@ import {
 } from 'rxjs';
 import { MoviesPageFilters } from './movies-page.models';
 import { MoviesPageService } from './movies-page.service';
-import { TypedFormGroup } from '@shared/type-helpers';
+import { MoviesService } from '@services/movies/movies.service';
 import {
   Genre,
   Genres,
   Movie,
   Movies,
 } from '@shared/state/movies/movies.models';
+import { TypedFormGroup } from '@shared/type-helpers';
 
 @Component({
   selector: 'app-movies-page',
@@ -39,6 +40,7 @@ export class MoviesPageComponent implements OnDestroy {
   readonly DEBOUNCE_TIME = 500;
 
   movies?: Movies;
+  lastVisitedMovies?: Movies;
   genres?: Genres;
 
   destroyed$ = new Subject();
@@ -48,6 +50,7 @@ export class MoviesPageComponent implements OnDestroy {
   form: TypedFormGroup<MoviesPageFilters> = createFiltersForm(
     this.activatedRoute.snapshot.queryParams,
   );
+
   formValues$ = this.form.valueChanges.pipe(
     distinctUntilChanged(),
     debounceTime(this.DEBOUNCE_TIME),
@@ -62,19 +65,22 @@ export class MoviesPageComponent implements OnDestroy {
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
     private readonly moviesPageService: MoviesPageService,
+    private readonly moviesService: MoviesService,
   ) {
     // ====
     // TL;DR: form -> queryParams -> filtered items
     //
     // 1. forms initialise (once) with query param values
-    // 2. changes to form values actively update `queryParams`
-    // 3. changes to `queryParams` actively update changes to:
-    //    - filtered list of movies
-    //    - filtered list of genres
+    // 2. changes to form values actively update queryParams
+    // 3. use latest values from queryParams + stored movies list:
+    //    - this.movies
+    //    - this.genres
     //
+
     this.bindFormToQueryParams();
     this.autoUpdateMovies();
     this.autoUpdateGenres();
+    this.autoUpdateLastVisitedMovies();
   }
 
   bindFormToQueryParams() {
@@ -91,13 +97,20 @@ export class MoviesPageComponent implements OnDestroy {
       this.movies = movies;
     });
   }
+
   autoUpdateGenres() {
     return this.moviesPageService.fetchFilteredGenres().subscribe((genres) => {
       this.genres = genres;
     });
   }
 
-  trackMovieBy(_index: number, movie?: Movie) {
+  autoUpdateLastVisitedMovies() {
+    return this.moviesService.fetchLastXVisitedMovies(5).subscribe((movies) => {
+      this.lastVisitedMovies = movies;
+    });
+  }
+
+  trackMovieBy(_index: number, movie: Movie) {
     return movie?.id;
   }
 
