@@ -44,13 +44,10 @@ describe(HomePageComponent.name, () => {
   });
 
   describe('page contents', () => {
-    it.each([' main', '.movie-list', '.side-menu', '.visited-movies'])(
-      '%s',
-      (selector) => {
-        const page: HTMLElement = fixture.debugElement.nativeElement;
-        expect(page.querySelector(selector)).toBeTruthy();
-      },
-    );
+    it.each([' main', '.movie-list', '.visited-movies'])('%s', (selector) => {
+      const page: HTMLElement = fixture.debugElement.nativeElement;
+      expect(page.querySelector(selector)).toBeTruthy();
+    });
   });
 
   it('should render `component.popularMovies`', async () => {

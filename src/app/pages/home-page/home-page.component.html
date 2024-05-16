@@ -1,25 +1,17 @@
-<p>home-page works!</p>
-
-<aside class="side-menu">
-  <nav>
-    <ul>
-      <li><a routerLink="/" routerLinkActive="active">Home</a></li>
-      <li><a routerLink="/movies">Movies</a></li>
+<app-base-layout>
+  <main>
+    <h2>Popular</h2>
+    <ul class="movie-list">
+      <ng-container *ngIf="popularMovies" >
+        <li *ngFor="let movie of popularMovies; index as i; trackBy: trackMovieBy" class="movie-list__item">
+          <a *ngIf="movie" [routerLink]="'/movies/' + movie.slug">
+            <img [src]="movie.image.url" [alt]="movie.image.title">
+          </a>
+        </li>
+      </ng-container>
     </ul>
-  </nav>
-</aside>
-<main>
-  <h2>Popular</h2>
-  <ul class="movie-list">
-    <ng-container *ngIf="popularMovies; else movieShadow" >
-      <li *ngFor="let movie of popularMovies; index as i; trackBy: trackMovieBy" class="movie-list__item">
-        <a *ngIf="movie" [routerLink]="'/movies/' + movie.slug">
-          <img [src]="movie.image.url" [alt]="movie.image.title">
-        </a>
-      </li>
-    </ng-container>
-  </ul>
-</main>
+  </main>
+</app-base-layout>
 <footer>
   <h2>Last Visited</h2>
   <ul class="visited-movies">
@@ -30,15 +22,3 @@
     </li>
   </ul>
 </footer>
-<ng-template #movieShadow>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-  <li class="movie-list__item">loading</li>
-</ng-template>
