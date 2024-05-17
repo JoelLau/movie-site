@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
+import { MoviesListComponent } from 'src/app/components/movies-list/movies-list.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,6 +19,7 @@ import { Movie, Movies } from '@shared/state/movies/movies.models';
 
     // Custom
     BaseLayoutComponent,
+    MoviesListComponent,
   ],
   selector: 'app-home-page',
   standalone: true,

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LastVisitedFooterComponent } from '@components/last-visited-footer/last-visited-footer.component';
-import { SideMenuComponent } from '@components/side-menu/side-menu.component';
+import { LastVisitedFooterComponent } from './last-visited-footer/last-visited-footer.component';
+import { SideMenuComponent } from './side-menu/side-menu.component';
 import { Movies } from '@shared/state/movies/movies.models';
 
 @Component({

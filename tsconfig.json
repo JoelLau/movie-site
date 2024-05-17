@@ -14,7 +14,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["src/app/components/*"],
+      "@components/*": ["src/app/layouts/base-layout/components/*"],
       "@env/*": ["src/environments/*"],
       "@layouts/*": ["src/app/layouts/*"],
       "@pages/*": ["src/app/pages/*"],

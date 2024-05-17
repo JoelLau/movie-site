@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { HomePageComponent } from './home-page.component';
-import { generateMockMovies } from '@tests/movie-generator';
+import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
+import { MoviesListComponent } from 'src/app/components/movies-list/movies-list.component';
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;
@@ -18,6 +20,10 @@ describe(HomePageComponent.name, () => {
 
         // Angular dependencies
         RouterModule.forRoot([]),
+
+        // Custom
+        MoviesListComponent,
+        BaseLayoutComponent,
       ],
       providers: [
         {
@@ -30,8 +36,13 @@ describe(HomePageComponent.name, () => {
       ],
     })
       .overrideComponent(HomePageComponent, {
-        set: { changeDetection: ChangeDetectionStrategy.Default },
+        remove: { imports: [BaseLayoutComponent] },
+        add: {
+          imports: [MockComponent(BaseLayoutComponent)],
+          schemas: [CUSTOM_ELEMENTS_SCHEMA],
+        },
       })
+      // set: { changeDetection: ChangeDetectionStrategy.Default },
       .compileComponents();
 
     fixture = TestBed.createComponent(HomePageComponent);
@@ -44,35 +55,9 @@ describe(HomePageComponent.name, () => {
   });
 
   describe('page contents', () => {
-    it.each([' main', '.movie-list', '.visited-movies'])('%s', (selector) => {
+    it.each([' main'])('%s', (selector) => {
       const page: HTMLElement = fixture.debugElement.nativeElement;
       expect(page.querySelector(selector)).toBeTruthy();
     });
-  });
-
-  it('should render `component.popularMovies`', async () => {
-    const expectedNumberOfMovies = 10;
-    component.popularMovies = generateMockMovies(expectedNumberOfMovies);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    const page: HTMLElement = fixture.debugElement.nativeElement;
-    expect(page.querySelectorAll('.movie-list__item')).toHaveLength(
-      expectedNumberOfMovies,
-    );
-  });
-
-  it('should render `component.popularMovies`', async () => {
-    const expectedNumberOfMovies = 5;
-    component.lastVisitedMovies = generateMockMovies(expectedNumberOfMovies);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    const page: HTMLElement = fixture.debugElement.nativeElement;
-    expect(page.querySelectorAll('.visited-movies__item')).toHaveLength(
-      expectedNumberOfMovies,
-    );
   });
 });

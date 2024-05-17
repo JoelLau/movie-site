@@ -1,7 +1,12 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { MockComponent } from 'ng-mocks';
 import { BaseLayoutComponent } from './base-layout.component';
+import { LastVisitedFooterComponent } from './last-visited-footer/last-visited-footer.component';
+import { SideMenuComponent } from './side-menu/side-menu.component';
+import { MoviesListComponent } from 'src/app/components/movies-list/movies-list.component';
 
 describe(BaseLayoutComponent.name, () => {
   let component: BaseLayoutComponent;
@@ -16,7 +21,13 @@ describe(BaseLayoutComponent.name, () => {
         // Angular dependencies
         RouterModule.forRoot([]),
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(LastVisitedFooterComponent, {
+        set: {
+          schemas: [CUSTOM_ELEMENTS_SCHEMA],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(BaseLayoutComponent);
     component = fixture.componentInstance;
