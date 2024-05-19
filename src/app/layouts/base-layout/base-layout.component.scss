@@ -1,0 +1,84 @@
+// ==================
+// Base Layout (Desktop)
+// ==================
+// 
+// |<------  full header ----------->|
+// +---------+-------------------------+
+// |  brand1 |  header content         |
+// +---------+-------------------------+
+// |    side |       page              |
+// |    menu |      content            |
+// | (right) |    (centered)           |
+// |         |                         |
+// +---------+-------------------------+
+// |  brand2 |  footer content         |
+// +-----------------------------------+
+//         |<- max: 70rem --->|
+//
+:host {
+    .grid-layout {
+        display: grid;
+        grid-template-columns: 1fr auto minmax(auto, 70rem) 1fr;
+        grid-template-rows: auto;
+        justify-items: stretch;
+        align-content: stretch;
+        row-gap: 2rem;
+        column-gap: 4rem;
+
+        .header {
+            grid-column: 1 / end;
+            background: pink;
+
+            display: grid;
+            grid-template-columns: subgrid;
+
+            .header__branding {
+                grid-column: 2 / 3;
+            }
+
+            .header__content {
+                grid-column: 3 / 4;
+            }
+        }
+
+        .side-menu {
+            grid-column: 2 / 3;
+            align-self: center;
+        }
+
+        .page-content {
+            grid-column: 3 / 4;
+        }
+
+        .footer {
+            grid-column: 1 / end;
+
+            display: grid;
+            grid-template-columns: subgrid;
+
+            .footer__content {
+                grid-column: 3 / 4;
+            }
+        }
+    }
+
+    .header {
+        padding-top: 1rem;
+    }
+
+    .header__branding {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-end;
+        align-items: center;
+
+        padding: 1rem;
+    }
+
+    .header__content {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+}

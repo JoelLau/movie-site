@@ -1,0 +1,9 @@
+:host {
+    .movie-filters {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: baseline;
+
+        width: 100%;
+    }
+}

@@ -1,12 +1,21 @@
-<div class="base-layout stacked">
-  <h1>Movies</h1>
-  <div class="middle-section">
-    <app-side-menu></app-side-menu>
-    <div class="page-content">
-        <ng-content></ng-content>
+<div class="base-layout grid-layout">
+  <header class="header">
+    <div class="header__branding">
+      <app-svg-home />
     </div>
-  </div>
-  <app-last-visited-footer
-    [movies]="lastVisitedMovies"
-  ></app-last-visited-footer>
+    <div class="header__content">
+      <h1>Movie Page</h1>
+    </div>
+  </header>
+  <aside class="side-menu">
+    <app-vert-menu />
+  </aside>
+  <section class="page-content">
+      <ng-content />
+  </section>
+  <footer class="footer">
+    <div class="footer__content">
+      <app-last-visited-footer [movies]="lastVisitedMovies" ></app-last-visited-footer>
+    </div>
+  </footer>
 </div>

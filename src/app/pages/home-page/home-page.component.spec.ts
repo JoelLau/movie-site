@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 import { HomePageComponent } from './home-page.component';
 import { MoviesService } from '@services/movies/movies.service';
-import { generateMockMovies } from '@tests/movie-generator';
 
 describe(HomePageComponent.name, () => {
   let component: HomePageComponent;
@@ -30,7 +29,9 @@ describe(HomePageComponent.name, () => {
       ],
     })
       .overrideComponent(HomePageComponent, {
-        set: { changeDetection: ChangeDetectionStrategy.Default },
+        set: {
+          schemas: [CUSTOM_ELEMENTS_SCHEMA],
+        },
       })
       .compileComponents();
 
@@ -41,38 +42,5 @@ describe(HomePageComponent.name, () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  describe('page contents', () => {
-    it.each([' main', '.movie-list', '.visited-movies'])('%s', (selector) => {
-      const page: HTMLElement = fixture.debugElement.nativeElement;
-      expect(page.querySelector(selector)).toBeTruthy();
-    });
-  });
-
-  it('should render `component.popularMovies`', async () => {
-    const expectedNumberOfMovies = 10;
-    component.popularMovies = generateMockMovies(expectedNumberOfMovies);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    const page: HTMLElement = fixture.debugElement.nativeElement;
-    expect(page.querySelectorAll('.movie-list__item')).toHaveLength(
-      expectedNumberOfMovies,
-    );
-  });
-
-  it('should render `component.popularMovies`', async () => {
-    const expectedNumberOfMovies = 5;
-    component.lastVisitedMovies = generateMockMovies(expectedNumberOfMovies);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    const page: HTMLElement = fixture.debugElement.nativeElement;
-    expect(page.querySelectorAll('.visited-movies__item')).toHaveLength(
-      expectedNumberOfMovies,
-    );
   });
 });

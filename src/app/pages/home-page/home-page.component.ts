@@ -5,6 +5,7 @@ import {
   Component,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { MoviesListComponent } from '@components/movies-list/movies-list.component';
 import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
 import { Movie, Movies } from '@shared/state/movies/movies.models';
@@ -18,6 +19,7 @@ import { Movie, Movies } from '@shared/state/movies/movies.models';
 
     // Custom
     BaseLayoutComponent,
+    MoviesListComponent,
   ],
   selector: 'app-home-page',
   standalone: true,
@@ -29,7 +31,7 @@ export class HomePageComponent {
   lastVisitedMovies?: Movies;
 
   constructor(
-    private readonly cdr: ChangeDetectorRef,
+    private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly moviesService: MoviesService,
   ) {
     this.autoUpdatePopularMovies();
@@ -41,14 +43,14 @@ export class HomePageComponent {
       .fetchXMostPopularMovies(10)
       .subscribe((movies) => {
         this.popularMovies = movies;
-        this.cdr.markForCheck();
+        this.changeDetectorRef.markForCheck();
       });
   }
 
   autoUpdateLastVisitedMovies() {
     return this.moviesService.fetchLastXVisitedMovies(5).subscribe((movies) => {
       this.lastVisitedMovies = movies;
-      this.cdr.markForCheck();
+      this.changeDetectorRef.markForCheck();
     });
   }
 

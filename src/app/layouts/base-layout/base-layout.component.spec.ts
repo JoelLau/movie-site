@@ -27,7 +27,7 @@ describe(BaseLayoutComponent.name, () => {
     expect(component).toBeTruthy();
   });
 
-  it.each(['app-side-menu'])('%s', (selector) => {
+  it.each(['app-vert-menu'])('%s', (selector) => {
     expect(fixture.debugElement.query(By.css(selector))).toBeTruthy();
   });
 });

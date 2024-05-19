@@ -1,46 +1,43 @@
 <app-base-layout [lastVisitedMovies]="lastVisitedMovies">
   <main>
-    <form [formGroup]="this.form">
-      <div>
-        <label for="movie-search-bar">
-          Search
-        </label>
-        <input
-          type="text"
-          name="movie-search-bar"
-          id="movie-search-bar"
-          placeholder="Search Terms"
-          formControlName="searchTerms"
-        />
-        <button type="button" (click)="this.form.controls.searchTerms.setValue('')">clear</button>
-      </div>
-      <div>
-        <label for="genre-filter">
-          Genres
-        </label>
-        <select
-          type="text"
-          name="genre-filter"
-          id="genre-filter"
-          formControlName="genres"
-          multiple
-        >
-        <option [value]="null" disabled>Select a Genre</option>
-          <ng-container *ngFor="let genre of genres; trackBy: trackGenreBy">
-            <option [value]="genre">{{ genre }}</option>
-          </ng-container>
-        </select>
-        <button type="button" (click)="this.form.controls.genres.setValue([])">clear</button>
-      </div>
-    </form>
-    <ul class="movie-list">
-      <ng-container *ngFor="let movie of movies; trackBy: trackMovieBy">
-        <li class="movie-list__item">
-          <a *ngIf="movie" routerLink="/movies/{{movie.slug}}">
-            <img [src]="movie.image.url" [alt]="movie.image.title">
-          </a>
-        </li>
-      </ng-container>
-    </ul>
+    <header>
+      <form class="movie-filters" [formGroup]="this.form">
+        <div class="movie-filter">
+          <label for="movie-search-bar">
+            Search
+          </label>
+          <input
+            type="search"
+            name="movie-search-bar"
+            id="movie-search-bar"
+            placeholder="Search Terms"
+            formControlName="searchTerms"
+          />
+          <button type="button" (click)="this.form.controls.searchTerms.setValue('')">clear</button>
+        </div>
+        <div class="movie-filter">
+          <label for="genre-filter">
+            Genres
+          </label>
+          <select
+            type="text"
+            name="genre-filter"
+            id="genre-filter"
+            formControlName="genres"
+            multiple
+          >
+          <option [value]="null" disabled>Select a Genre</option>
+            <ng-container *ngFor="let genre of genres; trackBy: trackGenreBy">
+              <option [value]="genre">{{ genre }}</option>
+            </ng-container>
+          </select>
+          <button type="button" (click)="this.form.controls.genres.setValue([])">clear</button>
+        </div>
+      </form>
+    </header>
+    <article>
+      <h2>Movies</h2>
+      <app-movies-list [movies]="movies"></app-movies-list>
+    </article>
   </main>
 </app-base-layout>
