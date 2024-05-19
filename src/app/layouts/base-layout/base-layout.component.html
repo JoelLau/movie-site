@@ -1,10 +1,11 @@
 <div class="base-layout grid-layout">
   <header class="header">
-    <div class="header__branding">
-      <app-svg-home />
-    </div>
     <div class="header__content">
-      <h1>Movie Page</h1>
+      <h1>
+        <a class="brand-link" routerLink="/">
+          Movie Page
+        </a>
+      </h1>
     </div>
   </header>
   <aside class="side-menu">
@@ -17,5 +18,8 @@
     <div class="footer__content">
       <app-last-visited-footer [movies]="lastVisitedMovies" ></app-last-visited-footer>
     </div>
+  </footer>
+  <footer class="built-by-footer">
+    <p>Built by&nbsp;<a href="https://github.com/JoelLau">Joel Lau</a>&nbsp;&copy;</p>
   </footer>
 </div>

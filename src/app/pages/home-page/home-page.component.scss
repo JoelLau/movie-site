@@ -9,9 +9,14 @@
         font-size: 2rem;
     }
 
-    .flex-col {
+    .home-page {
         display: flex;
         flex-flow: column nowrap;
         gap: 1rem;
+    }
+
+    .page-title {
+        font-weight: bold;
+        font-size: 1.5rem;
     }
 }

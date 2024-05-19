@@ -1,5 +1,4 @@
-<!-- <pre>{{ {movies} | json}}</pre> -->
-<ul class="movie-list flex-row">
+<ul class="movie-list">
   <ng-container *ngIf="movies">
     <li *ngFor="let movie of movies; trackBy: trackMovieBy" class="movie-list__item">
       <a [routerLink]="'/movies/' + movie.slug">

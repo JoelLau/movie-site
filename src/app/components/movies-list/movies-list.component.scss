@@ -2,23 +2,20 @@
     .movie-list {
         margin: 0;
         list-style-type: none;
-        overflow-x: auto;
         max-width: 90vw;
-    }
 
-    .flex-row {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: start;
-        align-items: center;
-        gap: 0.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 12rem);
+        grid-gap: 0.5rem;
+        align-items: stretch;
+        justify-content: stretch;
     }
 
     .movie-list__poster {
-        height: 17rem;
-        width: 12rem;
         border-radius: 4px;
-        // object-fit: cover;
-        object-position: 0 90%;
+        object-position: 0 0;
+
+        height: 100%;
+        width: 100%;
     }
 }

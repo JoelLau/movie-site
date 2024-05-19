@@ -2,8 +2,17 @@
     .movie-filters {
         display: flex;
         flex-flow: row wrap;
-        align-items: baseline;
 
         width: 100%;
+    }
+
+    article {
+        display: flex;
+        flex-flow: column wrap;
+        gap: 1rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
     }
 }
