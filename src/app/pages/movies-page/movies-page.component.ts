@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { NgxsFormPluginModule } from '@ngxs/form-plugin';
 import {
   Subject,
   debounceTime,
@@ -12,6 +11,7 @@ import {
 } from 'rxjs';
 import { MoviesPageFilters } from './movies-page.models';
 import { MoviesPageService } from './movies-page.service';
+import { MoviesListComponent } from '@components/movies-list/movies-list.component';
 import { BaseLayoutComponent } from '@layouts/base-layout/base-layout.component';
 import { MoviesService } from '@services/movies/movies.service';
 import {
@@ -31,11 +31,9 @@ import { TypedFormGroup } from '@shared/type-helpers';
     ReactiveFormsModule,
     RouterModule,
 
-    // Third-party
-    NgxsFormPluginModule,
-
     // Custom
     BaseLayoutComponent,
+    MoviesListComponent,
   ],
   templateUrl: './movies-page.component.html',
   styleUrl: './movies-page.component.scss',

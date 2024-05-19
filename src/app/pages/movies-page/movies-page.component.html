@@ -1,12 +1,12 @@
 <app-base-layout [lastVisitedMovies]="lastVisitedMovies">
-  <main>
-    <form [formGroup]="this.form">
-      <div>
+  <header>
+    <form class="movie-filters" [formGroup]="this.form">
+      <div class="movie-filter">
         <label for="movie-search-bar">
           Search
         </label>
         <input
-          type="text"
+          type="search"
           name="movie-search-bar"
           id="movie-search-bar"
           placeholder="Search Terms"
@@ -14,7 +14,7 @@
         />
         <button type="button" (click)="this.form.controls.searchTerms.setValue('')">clear</button>
       </div>
-      <div>
+      <div class="movie-filter">
         <label for="genre-filter">
           Genres
         </label>
@@ -33,14 +33,9 @@
         <button type="button" (click)="this.form.controls.genres.setValue([])">clear</button>
       </div>
     </form>
-    <ul class="movie-list">
-      <ng-container *ngFor="let movie of movies; trackBy: trackMovieBy">
-        <li class="movie-list__item">
-          <a *ngIf="movie" routerLink="/movies/{{movie.slug}}">
-            <img [src]="movie.image.url" [alt]="movie.image.title">
-          </a>
-        </li>
-      </ng-container>
-    </ul>
+  </header>
+  <main>
+    <h2>Movies</h2>
+    <app-movies-list [movies]="movies"></app-movies-list>
   </main>
 </app-base-layout>

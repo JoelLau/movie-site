@@ -1,0 +1,34 @@
+:host {
+    .vert-menu {
+        border-radius: 5px;
+        min-width: 100%;
+
+    }
+
+    .vert-menu__list {
+        list-style-type: none;
+        margin: 0;
+    }
+
+    .vert-menu__link {
+        padding: 0 1rem .25rem 4rem;
+
+        border-radius: 4px;
+        text-decoration: unset;
+        font-size: 1rem;
+        font-weight: bold;
+
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-end;
+        align-items: baseline;
+        gap: .5rem;
+
+        letter-spacing: 0.5px;
+
+        &.active,
+        &:hover {
+            color: #F7F7FF;
+        }
+    }
+}

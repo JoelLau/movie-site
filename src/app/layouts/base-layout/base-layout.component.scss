@@ -1,0 +1,95 @@
+:host {
+
+    // ==================
+    // Base Layout (Desktop)
+    // ==================
+    // 
+    // |<------  full header ----------->|
+    // +---------+-------------------------+
+    // |  brand1 |  header content         |
+    // +---------+-------------------------+
+    // |    side |       page              |
+    // |    menu |      content            |
+    // | (right) |    (centered)           |
+    // |         |                         |
+    // +---------+-------------------------+
+    // |  brand2 |  footer content         |
+    // +-----------------------------------+
+    //
+    .grid-layout {
+        display: grid;
+        grid-template-columns: 1fr auto minmax(auto, 70rem) 1fr;
+        grid-template-rows: auto;
+        justify-items: stretch;
+        align-content: stretch;
+        row-gap: 2rem;
+        column-gap: 4rem;
+
+        .header {
+            grid-column: 1 / end;
+
+            display: grid;
+            grid-template-columns: subgrid;
+
+            .header__branding {
+                grid-column: 2 / 3;
+            }
+
+            .header__content {
+                grid-column: 3 / 4;
+            }
+        }
+
+        .side-menu {
+            grid-column: 2 / 3;
+            align-self: start;
+        }
+
+        .page-content {
+            grid-column: 3 / 4;
+        }
+
+        .footer {
+            grid-column: 1 / end;
+
+            display: grid;
+            grid-template-columns: subgrid;
+
+            .footer__content {
+                grid-column: 3 / 4;
+            }
+        }
+    }
+
+    // ==================
+    //  Header
+    // ==================
+
+    .header {
+        padding-top: 1rem;
+        position: sticky;
+    }
+
+    .brand-link {
+        text-decoration: none;
+
+        font-size: 1.5rem;
+        color: #FFCF56;
+    }
+
+    .side-menu {
+        padding-top: 12rem;
+    }
+
+    .built-by-footer {
+        grid-column: 1 / end;
+        text-align: center;
+
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+
+        padding: 4rem 0 1rem 0;
+    }
+}

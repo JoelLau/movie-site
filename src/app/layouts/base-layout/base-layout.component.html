@@ -1,12 +1,25 @@
-<div class="base-layout stacked">
-  <h1>Movies</h1>
-  <div class="middle-section">
-    <app-side-menu></app-side-menu>
-    <div class="page-content">
-        <ng-content></ng-content>
+<div class="base-layout grid-layout">
+  <header class="header">
+    <div class="header__content">
+      <h1>
+        <a class="brand-link" routerLink="/">
+          Movie Page
+        </a>
+      </h1>
     </div>
-  </div>
-  <app-last-visited-footer
-    [movies]="lastVisitedMovies"
-  ></app-last-visited-footer>
+  </header>
+  <aside class="side-menu">
+    <app-vert-menu />
+  </aside>
+  <section class="page-content">
+      <ng-content />
+  </section>
+  <footer class="footer">
+    <div class="footer__content">
+      <app-last-visited-footer [movies]="lastVisitedMovies" ></app-last-visited-footer>
+    </div>
+  </footer>
+  <footer class="built-by-footer">
+    <p>Built by&nbsp;<a href="https://github.com/JoelLau">Joel Lau</a>&nbsp;&copy;</p>
+  </footer>
 </div>

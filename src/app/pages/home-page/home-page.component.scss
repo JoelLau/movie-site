@@ -1,0 +1,22 @@
+:host {
+    .hero {
+        min-height: 80vh;
+
+        background-repeat: no-repeat, repeat;
+    }
+
+    .home-page__title {
+        font-size: 2rem;
+    }
+
+    .home-page {
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+}

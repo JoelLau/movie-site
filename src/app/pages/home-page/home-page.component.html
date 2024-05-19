@@ -1,14 +1,6 @@
 <app-base-layout [lastVisitedMovies]="lastVisitedMovies">
-  <main>
-    <h2>Popular</h2>
-    <ul class="movie-list">
-      <ng-container *ngIf="popularMovies" >
-        <li *ngFor="let movie of popularMovies; index as i; trackBy: trackMovieBy" class="movie-list__item">
-          <a *ngIf="movie" [routerLink]="'/movies/' + movie.slug">
-            <img [src]="movie.image.url" [alt]="movie.image.title">
-          </a>
-        </li>
-      </ng-container>
-    </ul>
+  <main class="home-page">
+    <h1 class="page-title">Popular</h1>
+    <app-movies-list [movies]="popularMovies"></app-movies-list>
   </main>
 </app-base-layout>
