@@ -180,7 +180,7 @@ Project Link: [https://github.com/JoelLau/movie-site](https://github.com/JoelLau
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/JoelLau/movie-site.svg?style=for-the-badge
-[contributors-url]: https://github.com/JoelLau/movie-site/graphs/**contributors**
+[contributors-url]: https://github.com/JoelLau/movie-site/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/JoelLau/movie-site.svg?style=for-the-badge
 [forks-url]: https://github.com/JoelLau/movie-site/network/members
 [stars-shield]: https://img.shields.io/github/stars/JoelLau/movie-site.svg?style=for-the-badge
