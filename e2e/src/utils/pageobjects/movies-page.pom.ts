@@ -10,7 +10,7 @@ export class MoviesPage {
   }
 
   async visit() {
-    await this.page.goto(this.URL);
+    await this.page.goto(this.URL, { waitUntil: 'domcontentloaded' });
   }
 
   async getMovieListItems() {
@@ -18,7 +18,7 @@ export class MoviesPage {
   }
 
   async getMovieSearchBar() {
-    return this.page.getByRole('textbox', { name: /search/i });
+    return this.page.getByRole('searchbox', { name: /search/i });
   }
 
   async getGenreFilter() {
@@ -29,6 +29,6 @@ export class MoviesPage {
     const searchBar = await this.getMovieSearchBar();
 
     // search is debounced
-    return searchBar.fill(search, { timeout: 600 });
+    return searchBar.fill(search);
   }
 }

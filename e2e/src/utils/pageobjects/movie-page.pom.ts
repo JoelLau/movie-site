@@ -8,6 +8,6 @@ export class MoviesPage {
   }
 
   async visit(slug: string) {
-    await this.page.goto(`/movies/${slug}`);
+    await this.page.goto(`/movies/${slug}`, { waitUntil: 'domcontentloaded' });
   }
 }

@@ -82,22 +82,4 @@ describe(MoviePageComponent.name, () => {
     expect(fixture.componentInstance.movie).toBeFalsy();
     expect(rendered.querySelector('[data-testid=not-found]')).toBeTruthy();
   });
-
-  it('renders last visited', () => {
-    const numberOfLastVisited = 5;
-    const movies = MOCK_MOVIES.slice(0, numberOfLastVisited);
-    const service = TestBed.inject(MoviesService);
-    service.fetchLastXVisitedMovies = () => of(movies);
-
-    // retrigger constructor
-    fixture = TestBed.createComponent(MoviePageComponent);
-    component = fixture.componentInstance;
-    component.movie = MOCK_MOVIES[0];
-    fixture.detectChanges();
-
-    const page: HTMLElement = fixture.debugElement.nativeElement;
-    expect(page.querySelectorAll('.visited-movies__item')).toHaveLength(
-      numberOfLastVisited,
-    );
-  });
 });

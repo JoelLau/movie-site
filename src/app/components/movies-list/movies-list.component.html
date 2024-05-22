@@ -3,6 +3,7 @@
     <li
       *ngFor="let movie of movies; trackBy: trackMovieBy"
       class="movie-list__item"
+      data-testid="movie-listitem"
     >
       <a [routerLink]="'/movies/' + movie.slug">
         <img

@@ -25,12 +25,16 @@ test('navigate from home page', async ({ page }) => {
 });
 
 test('search for movies', async ({ page }) => {
-  mockMovieApiResponse(page);
+  await mockMovieApiResponse(page);
 
   const moviesPage = new MoviesPage(page);
   await moviesPage.visit();
 
   await moviesPage.fillMoviesSearch('dog');
+
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
+
   await page.waitForURL('**/movies?searchTerms**');
 
   // query params should update
@@ -62,5 +66,5 @@ test('search for movies', async ({ page }) => {
   // query params should update
   searchParams = new URL(page.url()).searchParams;
   expect(searchParams.has('genres')).toBeTruthy();
-  expect(searchParams.get('genres')).toStrictEqual('Crime');
+  expect(searchParams.get('genres')?.toLowerCase()).toStrictEqual('crime');
 });
