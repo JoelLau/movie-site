@@ -2,9 +2,7 @@
   <header>
     <form class="movie-filters" [formGroup]="this.form">
       <div class="movie-filter">
-        <label for="movie-search-bar">
-          Search
-        </label>
+        <label for="movie-search-bar"> Search </label>
         <input
           type="search"
           name="movie-search-bar"
@@ -12,12 +10,15 @@
           placeholder="Search Terms"
           formControlName="searchTerms"
         />
-        <button type="button" (click)="this.form.controls.searchTerms.setValue('')">clear</button>
+        <button
+          type="button"
+          (click)="this.form.controls.searchTerms.setValue('')"
+        >
+          clear
+        </button>
       </div>
       <div class="movie-filter">
-        <label for="genre-filter">
-          Genres
-        </label>
+        <label for="genre-filter"> Genres </label>
         <select
           type="text"
           name="genre-filter"
@@ -25,12 +26,14 @@
           formControlName="genres"
           multiple
         >
-        <option [value]="null" disabled>Select a Genre</option>
+          <option [value]="null" disabled>Select a Genre</option>
           <ng-container *ngFor="let genre of genres; trackBy: trackGenreBy">
             <option [value]="genre">{{ genre }}</option>
           </ng-container>
         </select>
-        <button type="button" (click)="this.form.controls.genres.setValue([])">clear</button>
+        <button type="button" (click)="this.form.controls.genres.setValue([])">
+          clear
+        </button>
       </div>
     </form>
   </header>
