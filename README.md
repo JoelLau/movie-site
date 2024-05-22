@@ -36,7 +36,7 @@
 <h3 align="center">Movie Site</h3>
 
   <p align="center">
-    Movie site originally built for a front-end develop position. See [original requirements here](REQUIREMENTS.md).
+    Movie site originally built for a front-end develop position.
     <br />
     <a href="https://github.com/JoelLau/movie-site"><strong>Explore the docs »</strong></a>
     <br />
