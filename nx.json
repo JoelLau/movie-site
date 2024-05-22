@@ -80,6 +80,5 @@
       "style": "scss"
     }
   },
-  "defaultProject": "movie-site",
-  "nxCloudAccessToken": "ODQ0ZDNjNzQtYWU1Ni00MTBmLWE1ODktOTRlNGFmYThjMzMxfHJlYWQtd3JpdGU="
+  "defaultProject": "movie-site"
 }

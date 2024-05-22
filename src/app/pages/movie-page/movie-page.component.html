@@ -1,19 +1,21 @@
 <ng-container *ngIf="movie; else noMovie">
   <app-base-layout [lastVisitedMovies]="lastVisitedMovies">
     <main>
-      <h1>{{movie.title}}</h1>
+      <h1>{{ movie.title }}</h1>
       <ul>
-        <li *ngFor="let genre of movie.genres">{{genre}}</li>
+        <li *ngFor="let genre of movie.genres">{{ genre }}</li>
       </ul>
-      <p>popularity: <span>{{movie.popularity | number: '0.2-2'}}</span></p>
-      <p>budget: <span>{{movie.budget | currency: 'EUR' }}</span></p>
-      <img [src]="movie.image.url" [alt]="movie.image.title">
+      <p>
+        popularity: <span>{{ movie.popularity | number: '0.2-2' }}</span>
+      </p>
+      <p>
+        budget: <span>{{ movie.budget | currency: 'EUR' }}</span>
+      </p>
+      <img [src]="movie.image.url" [alt]="movie.image.title" />
     </main>
   </app-base-layout>
 </ng-container>
 
 <ng-template #noMovie>
-  <main data-testid="not-found">
-    not found
-  </main>
+  <main data-testid="not-found">not found</main>
 </ng-template>

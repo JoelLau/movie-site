@@ -96,9 +96,17 @@
         "*.html"
       ],
       "extends": [
-        "plugin:@nx/angular-template"
+        "plugin:@nx/angular-template",
+        "plugin:prettier/recommended"
       ],
-      "rules": {}
+      "rules": {
+        "prettier/prettier": [
+          "error",
+          {
+            "parser": "angular"
+          }
+        ]
+      }
     }
   ]
 }
