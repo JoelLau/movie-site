@@ -20,7 +20,6 @@ import { TrackMoviePageVisit } from '@shared/state/user/user.actions';
     BaseLayoutComponent,
   ],
   templateUrl: './movie-page.component.html',
-  styleUrl: './movie-page.component.scss',
 })
 export class MoviePageComponent {
   movie?: Movie;

@@ -1,9 +1,28 @@
 :host {
 
     // ==================
+    //  Header
+    // ==================
+
+    .header {
+        padding-top: 1rem;
+        position: sticky;
+    }
+
+    .brand-link {
+        text-decoration: none;
+
+        font-size: 1.5rem;
+        color: #FFCF56;
+    }
+
+    .side-menu {
+        padding-top: 12rem;
+    }
+
+    // ==================
     // Base Layout (Desktop)
     // ==================
-    // 
     // |<------  full header ----------->|
     // +---------+-------------------------+
     // |  brand1 |  header content         |
@@ -15,7 +34,6 @@
     // +---------+-------------------------+
     // |  brand2 |  footer content         |
     // +-----------------------------------+
-    //
     .grid-layout {
         display: grid;
         grid-template-columns: 1fr auto minmax(auto, 70rem) 1fr;
@@ -61,25 +79,6 @@
         }
     }
 
-    // ==================
-    //  Header
-    // ==================
-
-    .header {
-        padding-top: 1rem;
-        position: sticky;
-    }
-
-    .brand-link {
-        text-decoration: none;
-
-        font-size: 1.5rem;
-        color: #FFCF56;
-    }
-
-    .side-menu {
-        padding-top: 12rem;
-    }
 
     .built-by-footer {
         grid-column: 1 / end;

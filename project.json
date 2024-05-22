@@ -80,6 +80,13 @@
       "options": {
         "jestConfig": "jest.config.ts"
       }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["**/*.scss"]
+      }
     }
   }
 }
